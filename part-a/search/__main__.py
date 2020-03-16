@@ -10,7 +10,5 @@ def main():
 
     # TODO: find and print winning action sequence
 
-
-
 if __name__ == '__main__':
     main()
