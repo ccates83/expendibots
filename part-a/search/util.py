@@ -40,7 +40,7 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
         coordinates along the edges of the board, False to use a bigger one
         with coordinates alongside the printable information in each square.
         Default True (small board).
-    
+
     Any other keyword arguments are passed through to the print function.
     """
     if unicode:
