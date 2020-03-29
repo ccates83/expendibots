@@ -1,3 +1,6 @@
+from search.util import print_move, print_boom, print_board
+from search.node import Node
+
 def solve(board_data):
     """
     Overarching function that outputs the moves needed to win the game.
@@ -38,6 +41,7 @@ def is_occupied_by_white(location, board_data):
 def is_occupied(location, board_data):
     return  is_occupied_by_black(location, board_data) or \
             is_occupied_by_white(location, board_data)
+
 
 def list_neighboring_empty_tiles(node, board_data):
     """
@@ -150,6 +154,7 @@ def are_neighbors(node1, node2):
 def tiles_are_neighbors(coord1, coord2):
     return abs(coord1[0] - coord2[0]) <= 1 and \
             abs(coord1[1] - coord2[1]) <= 1
+
 
 def explode(node, board_data):
     print_boom(node[1], node[2])

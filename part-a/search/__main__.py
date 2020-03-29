@@ -13,8 +13,7 @@ def main():
     print("#", data)
     print()
 
-    #solve(data)
-    print(find_optimal_locations(data));
+    solve(data)
 
 
 
