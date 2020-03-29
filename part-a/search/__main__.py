@@ -8,8 +8,7 @@ def main():
         data = json.load(file)
 
     # TODO: find and print winning action sequence
-    print(data['white'])
-    print_board(data)
+    print_board(data, 'I am the board message!')
 
 if __name__ == '__main__':
     main()
