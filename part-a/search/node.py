@@ -30,10 +30,10 @@ class Node():
     def lands_on_white_check(self, new_x, new_y, pieces_to_move):
         for i in self.state["white"]:
             if new_x == i[1] and new_y == i[2]:
-                i[0]+= pieces_to_move
-                if pieces_to_move == self.piece[0]:
+                i[0]+= pieces_to_move # add moved pieces to newly formed white stack
+                if pieces_to_move == self.piece[0]: # if moving all pieces delete the original white piece
                     del self.new_state["white"][self.piece_number]
-                else:
+                else: # else decrease the number of pieces in the original stack
                     self.piece[0] -= pieces_to_move
                 return True
 
@@ -50,9 +50,9 @@ class Node():
         if self.lands_on_white_check(new_x, new_y, pieces_to_move):
             return self.new_state
         else:
-            if pieces_to_move == self.piece[0]:
+            if pieces_to_move == self.piece[0]: # if moving all pieces in stack just change the y variable
                 self.new_state["white"][self.piece_number][2] = new_y
-            else:
+            else: # else decrease number of pieces in original stack and add new piece location to white list
                 self.new_state["white"][self.piece_number][0] -= pieces_to_move
                 self.new_state["white"].append([pieces_to_move,new_x,new_y])
             return self.new_state
