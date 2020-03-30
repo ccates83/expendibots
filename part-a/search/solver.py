@@ -39,9 +39,10 @@ def solve(board_data, visited_locations = [], current_path = ""):
         for loc in target_locations:
             potential_paths.put((heuristic_value(board_data, white, loc), loc))
 
+    # Printing the queue for testing
     while(not potential_paths.empty()):
         next = potential_paths.get()
-        print(next)
+        print("# ", next)
 
 
 
