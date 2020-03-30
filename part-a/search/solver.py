@@ -37,7 +37,7 @@ def solve(board_data, visited_locations = [], current_path = ""):
     potential_paths = DescendingPriorityQueue()
     for white in board_state["white"]:
         for loc in target_locations:
-            potential_paths.put((calculate_total_path_cost(board_data, white, loc), loc))
+            potential_paths.put((heuristic_value(board_data, white, loc), loc))
 
     while(not potential_paths.empty()):
         next = potential_paths.get()
@@ -61,7 +61,7 @@ def list_black_neighbor_tiles(board_data):
     return neighbors
 
 
-def calculate_total_path_cost(board_data, start_node, target_location):
+def heuristic_value(board_data, start_node, target_location):
     """
     Assigns a value to this path - higher the betterself.
     FACTORS:
