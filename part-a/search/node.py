@@ -20,6 +20,10 @@ class Node():
         self.move_down = None
         self.move_right = None
 
+        # list of each of the other nodes
+        self.children = []
+
+
     # check if chosen white piece move lands on black piece
     def lands_on_black_check(self, new_x, new_y):
         for i in self.state["black"]:
@@ -117,3 +121,7 @@ class Node():
                 self.new_state["white"][self.piece_number][0] -= pieces_to_move
                 self.new_state["white"].append([pieces_to_move,new_x,new_y])
             return self.new_state
+
+
+    def add_child(self, child):
+        self.children.append(child)

@@ -1,30 +1,106 @@
-from search.util import print_move, print_boom, print_board
-from search.node import Node
+from search.DescendingPriorityQueue import *
 
-def solve(board_data):
+def solve(board_data, visited_locations = [], current_path = ""):
     """
-    Overarching function that outputs the moves needed to win the game.
+    Overarching solve function. Win if white pieces are not empty and black
+    pieces are empty in the board data.
+    PARAMS:
+        - board_data = current state of the board
+        - visited_locations = the tuple locations the current path has been to
+        - current_path = string to print of all the moves of this current soln
     """
-    if (len(board_data["black"]) == 0):
-        print("# SOLVED")
-        return
 
-    path = get_closest_nodes(board_data)
-    execute_path(path[0], path[1], board_data)
+    # If there are not more black pieces in the current game board, this is solved
+    if( not board_data["black"] ):
+        print("# Solved!")
+        print(current_path)
+        return True # Solved
 
-    solve(board_data)
+    # Copy all the data so recursive calls do not mess with other branches
+    board_state = dict(board_data)
+    visited = visited_locations.copy()
+    curr_path = current_path
+
+    # OUTLINE:
+    #  - find the location we want a white piece to move
+    #  - try each path, checking for repeated visits to locations
+    #  - recursively go through each option and if we run out of white pieces then
+    #         we kill that branch
+
+    # Find all neighboring tiles to blacks
+    target_locations = list_black_neighbor_tiles(board_state)
+
+    # For every white piece, try every target location and eventually explode
+    # this would be a good place to sort the paths from whites to these target_locations
+    # based on our heuristic - some combination of number of moves, number of blacks
+    # exploded, number of white pieces lost, etc...
+    potential_paths = DescendingPriorityQueue()
+    for white in board_state["white"]:
+        for loc in target_locations:
+            potential_paths.put((calculate_total_path_cost(board_data, white, loc), loc))
+
+    while(not potential_paths.empty()):
+        next = potential_paths.get()
+        print(next)
 
 
-def horizontal_distance(node1, node2):
-    return abs(node1[1] - node2[1])
 
 
-def vertical_distance(node1, node2):
-    return abs(node1[2] - node2[2])
+def list_black_neighbor_tiles(board_data):
+    """
+    Lists all neighboringn locations to black tiles. These are the locations we
+    want our white pieces to potentially be.
+    """
+    neighbors = []
+    for black in board_data["black"]:
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                loc = (black[1] + i, black[2] + j)
+                if( not is_occupied_by_black(loc, board_data)):
+                    neighbors.append(loc)
+    return neighbors
+
+
+def calculate_total_path_cost(board_data, start_node, target_location):
+    """
+    Assigns a value to this path - higher the betterself.
+    FACTORS:
+        + Number of black pieces we would explode in that location
+        + 14 - manhattan distance (14 is the furthest it can be, corner to corner of the board)
+        - Number of white pieces we would lose exploding there
+    """
+    start = (start_node[1], start_node[2]) #start_node.coord ## maybe store its current location too
+    step = 1 # start_node.stack_size ## I am not positive where you store this yet
+    return  14 - calculate_number_moves(start, target_location, step) + \
+            count_eliminated_tiles(target_location, board_data)
+
+
+
+#
+#   Keep from here to ##### for sure
+#
+
+# The next two functions take two tuple coordinates and finds the distances
+#
+def horizontal_distance(start, end):
+    return abs(start[0] - end[0])
+def vertical_distance(start, end):
+    return abs(start[1] - start[1])
+
+def calculate_number_moves(start_loc, target_loc, step):
+    """
+    Calculates the number of moves it would take the node to reach the distination
+    coordinates. Works with stacks.
+    Should not have to worry about pieces in the way.
+    """
+    # distance / number of spaces the stack can move
+    return  horizontal_distance(start_loc, target_loc) / step + \
+            vertical_distance(start_loc, target_loc) / step
+
+#####
 
 
 def is_occupied_by_black(location, board_data):
-    print(location)
     for black in board_data["black"]:
         if location == (black[1], black[2]):
             return True
@@ -67,22 +143,18 @@ def count_occurances(list):
     return elements
 
 
-def count_eliminated_tiles(explosion_location, board_data, already_exploded):
+def count_eliminated_tiles(explosion_location, board_data, already_exploded = []):
     """
-    Calculates the number of black tiles that would blow up from a given location
+    Calculates the number of tiles that would blow up from a given location
+    RETURN:
+        - eliminated[0] is the white tiles lost
+        - eliminated[1] is the black tiles exploded
     """
-    # print(" -- current tile: ", explosion_location)
     total = 0
     for black in board_data["black"]:
-        # print("Checking ", explosion_location, " vs ", black)
-        # print(tiles_are_neighbors((black[1], black[2]), explosion_location))
         if are_neighbors(black, (1, explosion_location[0], explosion_location[1])):
-            # print("Current: ", explosion_location, " -- next: ", black)
-            # print(already_exploded)
             if black not in already_exploded:
-                # print("Exploding: ", black, "-----------------> +1")
                 already_exploded.append(black)
-                # print(already_exploded)
                 total += 1 + count_eliminated_tiles((black[1], black[2]), board_data, already_exploded)
     return total
 
@@ -111,18 +183,6 @@ def find_optimal_locations(board_data):
             optimal_locations.append(loc)
 
     return optimal_locations
-
-
-# Update this to check number of moves to being a NEIGHBOR not ontop
-def calculate_number_moves(node, target_node):
-    """
-    Calculates the number of moves it would take the node to reach the distination
-    coordinates. Works with stacks.
-    Should not have to worry about pieces in the way.
-    """
-    # distance / number of spaces the stack can move
-    return  horizontal_distance(node, target_node) / node[0] + \
-            vertical_distance(node, target_node) / node[0]
 
 
 def get_closest_nodes(board_data):

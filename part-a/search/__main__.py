@@ -10,11 +10,10 @@ def main():
         data = json.load(file)
 
     # TODO: find and print winning action sequence
-    # print("#", data)
-    # print()
-    #
-    # solve(data)
     print_board(data)
+    solve(data)
+
+
 
 
 
