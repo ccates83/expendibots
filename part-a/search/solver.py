@@ -1,19 +1,18 @@
 from search.DescendingPriorityQueue import *
 
-def solve(board_data, visited_locations = [], current_path = ""):
+def solve(board_data, visited_locations=[], current_path=[]):
     """
     Overarching solve function. Win if white pieces are not empty and black
     pieces are empty in the board data.
     PARAMS:
         - board_data = current state of the board
         - visited_locations = the tuple locations the current path has been to
-        - current_path = string to print of all the moves of this current soln
+        - current_path = list of moves to print of all the moves of this current soln
     """
 
     # If there are not more black pieces in the current game board, this is solved
-    if( not board_data["black"] ):
-        print("# Solved!")
-        print(current_path)
+    if( not board_data["black"] ): 
+        # Print the path using the print_move() from util
         return True # Solved
 
     # Copy all the data so recursive calls do not mess with other branches
