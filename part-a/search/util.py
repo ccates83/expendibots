@@ -142,10 +142,18 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
     # board the board string
     coords = [(x,7-y) for y in range(8) for x in range(8)]
     cells = []
+    whites = []
+    blacks = []
+    for white in board_dict["white"]:
+        whites.append((white[1], white[2]))
+    for black in board_dict["black"]:
+        blacks.append((black[1], black[2]))
     for xy in coords:
-        if xy not in board_dict:
+        if xy not in whites and xy not in blacks:
             cells.append("   ")
-        else:
-            cells.append(str(board_dict[xy])[:3].center(3))
+        elif xy in whites:
+            cells.append(" w ") #str(board_dict[xy])[:3].center(3))
+        elif xy in blacks:
+            cells.append(" b ") #str(board_dict[xy])[:3].center(3))
     # print it
     print(template.format(message, *cells), **kwargs)
