@@ -138,22 +138,22 @@ class Node():
             current_path_cost = path_cost_queue.pop(0) # select and remove the path cost for reaching current node
 
             for white_pieces in current_node.state["white"]:
-                visited_nodes.add(tuple(white_pieces)) # avoid repeated state
+                visited_nodes.add(tuple(white_pieces)) # added as a tupple to be able to put list in set
             print("visited nodes:",visited_nodes)
 
 
-            # when the goal state is found, trace back to the root node and print out the path
+            # find path when goal is found
             if (not current_node.state["black"]):
-                #print path
+                #print path***************
                 return True
 
             else:
-                # see if moving upper tile down is a valid move
+                # try moving down
                 if current_node.try_move_down(1,self.piece_number):
                     new_state = current_node.try_move_down(1,self.piece_number)
-                    # check if the resulting node is already visited
+                    # check if the down node is visited
                     if tuple(new_state["white"][-1]) not in visited_nodes:
-                        # create a new child node
+                        # create new child node
                         current_node.move_down = Node(state=new_state,piece_number=self.piece_number,parent=current_node,\
                                                 action='down',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
 
@@ -161,43 +161,44 @@ class Node():
                         depth_queue.append(current_depth+1)
                         path_cost_queue.append(current_path_cost)
 
-                # see if moving left tile to the right is a valid move
+                # try moving right
                 if current_node.try_move_right(1,self.piece_number):
                     new_state = current_node.try_move_right(1,self.piece_number)
-                    # check if the resulting node is already visited
+                    # check if the right node is visited
                     if tuple(new_state["white"][-1]) not in visited_nodes:
-                        # create a new child node
+                        # create new child node
                         current_node.move_right = Node(state=new_state,piece_number=self.piece_number,parent=current_node,\
                                                 action='right',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                         queue.append(current_node.move_right)
                         depth_queue.append(current_depth+1)
                         path_cost_queue.append(current_path_cost)#######
 
-                # see if moving lower tile up is a valid move
+                # try moving up
                 if current_node.try_move_up(1,self.piece_number):
                     new_state = current_node.try_move_up(1,self.piece_number)
-                    # check if the resulting node is already visited
+                    # check if the up node is visited
                     if tuple(new_state["white"][-1]) not in visited_nodes:
-                        # create a new child node
+                        # create new child node
                          current_node.move_up = Node(state=new_state,piece_number=self.piece_number,parent=current_node,\
                                                 action='up',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                          queue.append(current_node.move_up)
                          depth_queue.append(current_depth+1)
                          path_cost_queue.append(current_path_cost)
 
-                # see if moving right tile to the left is a valid move
+                # try moving left
                 if current_node.try_move_left(1,self.piece_number):
                     new_state = current_node.try_move_left(1,self.piece_number)
-                    # check if the resulting node is already visited
+                    # check if the left node is visited
                     if tuple(new_state["white"][-1]) not in visited_nodes:
-                        # create a new child node
+                        # create new child node
                         current_node.move_left = Node(state=new_state,piece_number=self.piece_number,parent=current_node,\
                                                 action='left',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                         queue.append(current_node.move_left)
                         depth_queue.append(current_depth+1)
                         path_cost_queue.append(current_path_cost)
+
+                # just printing to test what's happening
                 for i in queue:
                     print("queue",i.state["white"])
-
                 print("depth_queue",depth_queue)
                 print_board(new_state)
