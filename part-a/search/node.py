@@ -2,6 +2,7 @@ BOARD_SIZE_MIN = 0
 BOARD_SIZE_MAX = 7
 
 from search.util import *
+import copy
 
 class Node():
     def __init__(self,state,piece_number,parent,action=None,depth=None,path_cost=None,heuristic_cost=0):
@@ -37,10 +38,15 @@ class Node():
                     self.state["white"][self.piece_number][0] -= pieces_to_move
                 return True
 
+
     def try_move_up(self, move_distance, pieces_to_move):
+        old_x = self.state["white"][self.piece_number][1]
+        old_y = self.state["white"][self.piece_number][2]
         new_x = self.state["white"][self.piece_number][1] # x stays the same
         new_y = self.state["white"][self.piece_number][2] + move_distance # y moves up by n
-        new_state = self.state.copy()
+        # new_state = self.state.copy()
+        new_state = copy.deepcopy(self.state)
+
         # check if move by n is valid
         if new_y > BOARD_SIZE_MAX:
             return False
@@ -49,6 +55,7 @@ class Node():
             return False
         # check if white piece lands on any white pieces
         if self.lands_on_white(new_x, new_y, pieces_to_move):
+            remove_piece(new_state, (old_x, old_y))
             return new_state
         else:
             if pieces_to_move == self.state["white"][self.piece_number][0]: # if moving all pieces in stack just change the y variable
@@ -56,12 +63,17 @@ class Node():
             else: # else decrease number of pieces in original stack and add new piece location to white list
                 new_state["white"][self.piece_number][0] -= pieces_to_move
                 new_state["white"].append([pieces_to_move,new_x,new_y])
+            remove_piece(new_state, (old_x, old_y))
             return new_state
 
     def try_move_down(self, move_distance, pieces_to_move):
+        old_x = self.state["white"][self.piece_number][1]
+        old_y = self.state["white"][self.piece_number][2]
         new_x = self.state["white"][self.piece_number][1] # x stays the same
         new_y = self.state["white"][self.piece_number][2] - move_distance # y moves down by n
-        new_state = self.state.copy()
+        # new_state = self.state.copy()
+        new_state = copy.deepcopy(self.state)
+
         # check if move by n is valid
         if new_y < BOARD_SIZE_MIN:
             return False
@@ -70,6 +82,7 @@ class Node():
             return False
         # check if white piece lands on any white pieces
         if self.lands_on_white(new_x, new_y, pieces_to_move):
+            remove_piece(new_state, (old_x, old_y))
             return new_state
         else:
             if pieces_to_move == self.state["white"][self.piece_number][0]:
@@ -77,12 +90,17 @@ class Node():
             else:
                 new_state["white"][self.piece_number][0] -= pieces_to_move
                 new_state["white"].append([pieces_to_move,new_x,new_y])
+            remove_piece(new_state, (old_x, old_y))
             return new_state
 
     def try_move_right(self, move_distance, pieces_to_move):
+        old_x = self.state["white"][self.piece_number][1]
+        old_y = self.state["white"][self.piece_number][2]
         new_x = self.state["white"][self.piece_number][1] + move_distance # x moves right by n
         new_y = self.state["white"][self.piece_number][2] # y stays the same
-        new_state = self.state.copy()
+        # new_state = self.state.copy()
+        new_state = copy.deepcopy(self.state)
+
         # check if move by n is valid
         if new_x > BOARD_SIZE_MAX:
             return False
@@ -91,6 +109,7 @@ class Node():
             return False
         # check if white piece lands on any white pieces
         if self.lands_on_white(new_x, new_y, pieces_to_move):
+            remove_piece(new_state, (old_x, old_y))
             return new_state
         else:
             if pieces_to_move == self.state["white"][self.piece_number][0]:
@@ -98,13 +117,18 @@ class Node():
             else:
                 new_state["white"][self.piece_number][0] -= pieces_to_move
                 new_state["white"].append([pieces_to_move,new_x,new_y])
+            remove_piece(new_state, (old_x, old_y))
             return new_state
 
 
     def try_move_left(self, move_distance, pieces_to_move):
+        old_x = self.state["white"][self.piece_number][1]
+        old_y = self.state["white"][self.piece_number][2]
         new_x = self.state["white"][self.piece_number][1] - move_distance # x moves left by n
         new_y = self.state["white"][self.piece_number][2] # y stays the same
-        new_state = self.state.copy()
+        # new_state = self.state.copy()
+        new_state = copy.deepcopy(self.state)
+
         # check if move by n is allowable
         if new_x < BOARD_SIZE_MIN:
             return False
@@ -113,6 +137,7 @@ class Node():
             return False
         # check if white piece lands on any white pieces
         if self.lands_on_white(new_x, new_y, pieces_to_move):
+            remove_piece(new_state, (old_x, old_y))
             return new_state
         else:
             if pieces_to_move == self.state["white"][self.piece_number][0]:
@@ -120,7 +145,48 @@ class Node():
             else:
                 new_state["white"][self.piece_number][0] -= pieces_to_move
                 new_state["white"].append([pieces_to_move,new_x,new_y])
+            remove_piece(new_state, (old_x, old_y))
             return new_state
+
+
+    #
+    # This was me trying to reason through a recursive solution, factoring in the
+    # best places to go.
+    #
+    def solve(self, target_locations, current_state, visited=[]):
+        """
+        Recursive solve function to pass each new state of the board and have the
+        locations of the best places to get a white piece to. Once we get a white
+        piece to the target location we explode and try to use the next white piece.
+        The board state can serve as a queue for the white nodes and when there are
+        no whites with blacks left we know that path is no good and backtrack to the
+        last state of the board.
+        """
+        # Base cases
+        if(did_lose(current_state)):
+            return False
+        if(did_win(current_state)):
+            return True
+
+        # Add current location to the list of visited locations, copying the list
+        # for backtracking purposes
+        visited_locations = copy.deepcopy(visited)
+        print("# Current state:")
+        print_board(current_state)
+
+        # Try each direction and recursively call the solve function on the new spots
+        if (self.try_move_up(1, self.piece_number)): return True
+
+
+        return True
+
+
+    def explode(self):
+        """
+        Explodes the node and recursively calls explode on any neighbors.
+        """
+        remove_piece(self.state, )
+
 
     def search(self):
         #implemeting FIFO queue without heuristic for now just a simple version to make it work
@@ -139,8 +205,15 @@ class Node():
 
             for white_pieces in current_node.state["white"]:
                 visited_nodes.add(tuple(white_pieces)) # added as a tupple to be able to put list in set
-            print("visited nodes:",visited_nodes)
+            print("visited nodes:", visited_nodes)
 
+            for black in current_node.state["black"]:
+                for white in current_node.state["white"]:
+                    if (are_neighbors((black[1], black[2]), (white[1], white[2]))):
+                        print("# ---- SOLVED ---- #")
+                        print_board(current_node.state)
+
+                        return True
 
             # find path when goal is found
             if (not current_node.state["black"]):

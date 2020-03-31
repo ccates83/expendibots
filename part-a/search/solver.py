@@ -11,7 +11,7 @@ def solve(board_data, visited_locations=[], current_path=[]):
     """
 
     # If there are not more black pieces in the current game board, this is solved
-    if( not board_data["black"] ): 
+    if( not board_data["black"] ):
         # Print the path using the print_move() from util
         return True # Solved
 
@@ -42,6 +42,8 @@ def solve(board_data, visited_locations=[], current_path=[]):
     while(not potential_paths.empty()):
         next = potential_paths.get()
         print("# ", next)
+
+
 
 
 

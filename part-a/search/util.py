@@ -157,3 +157,83 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
             cells.append(" b ") #str(board_dict[xy])[:3].center(3))
     # print it
     print(template.format(message, *cells), **kwargs)
+
+
+#
+# Added utility functions
+#
+def did_lose(board_state):
+    """
+    Check the board state. If there are blacks and no white pieces left we lose.
+    """
+    return board_state["black"] and not board_state["white"]
+
+def did_win(board_state):
+    """
+    Check board state. If there are no blacks left we win.
+    """
+    return not board_state["black"]
+
+
+def are_neighbors(location1, location2):
+    """
+    Check if the two locations neighbor eachother
+    """
+    return  abs(location1[0]-location2[0]) <= 1 and \
+            abs(location1[1]-location2[1]) <= 1
+
+
+def is_occupied_by_black(location, board_data):
+    for black in board_data["black"]:
+        if location == (black[1], black[2]):
+            return True
+    return False
+
+
+def is_occupied_by_white(location, board_data):
+    for white in board_data["white"]:
+        if location == (white[1], white[2]):
+            return True
+    return False
+
+
+def is_occupied(location, board_data):
+    return  is_occupied_by_black(location, board_data) or \
+            is_occupied_by_white(location, board_data)
+
+
+def list_neighboring_pieces(board_state, location):
+    neighbors = []
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            loc = (location[0]+i, location[1]+j)
+            if (is_occupied(loc, board_state)):
+                neighbors.append(loc)
+    return neighbors
+
+
+def remove_piece(board_state, location):
+    """
+    Removes a piece from the given location on the board state
+    """
+    # Check the black locations
+    for black in board_state["black"]:
+        if (location == (black[1], black[2])):
+            board_state["black"].remove(black)
+    # Check the whites
+    for white in board_state["white"]:
+        if (location == (white[1], white[2])):
+            board_state["white"].remove(white)
+
+
+def explode(board_state, location):
+    """
+    Explodes the node and recursively calls explode on any neighbors.
+    Returns the new board state after the explosion.
+    """
+    if (not is_occupied(location, board_state)): return board_state
+    print("# Explosion!")
+    remove_piece(board_state, location)
+    for neighbor in list_neighboring_pieces(board_state, location):
+        explode(board_state, location)
+    return board_state
