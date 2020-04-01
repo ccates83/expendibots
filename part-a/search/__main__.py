@@ -31,23 +31,6 @@ def main():
             print("SOLVED")
             break
 
-    # # Find all neighboring tiles to blacks
-    # target_locations = list_black_neighbor_tiles(data)
-    #
-    # # For every white piece, try every target location and eventually explode
-    # # this would be a good place to sort the paths from whites to these target_locations
-    # # based on our heuristic - some combination of number of moves, number of blacks
-    # # exploded, number of white pieces lost, etc...
-    # potential_paths = DescendingPriorityQueue()
-    # for white in data["white"]:
-    #     for loc in target_locations:
-    #         potential_paths.put((heuristic_value(data, white, loc), loc))
-    #
-    # # Printing the queue for testing
-    # print("# Target locations: ")
-    # while(not potential_paths.empty()):
-    #     next = potential_paths.get()
-    #     print("# ", next)
 
 if __name__ == '__main__':
     main()
