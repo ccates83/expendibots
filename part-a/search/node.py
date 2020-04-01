@@ -180,23 +180,27 @@ class Node():
                 visited_nodes.add(tuple(white_pieces)) # added as a tupple to be able to put list in set
             print("visited nodes:", visited_nodes)
 
+            # Check if our current location neighbors any of the black pieces
             for black in current_node.state["black"]:
-                for white in current_node.state["white"]:
-                    if (are_neighbors((black[1], black[2]), (white[1], white[2]))):
-                        temp_state = copy.deepcopy(current_node.state)
-                        print_board(temp_state)
-                        explode(temp_state, current_node.location)
-                        print_board(temp_state)
+                if (are_neighbors((black[1], black[2]), current_node.location)):
 
-                        # check if we win after the explosion, if not move on to the next white
-                        # piece. if there are no more then we lost and can return False
-                        if (did_win(temp_state)): return True
+                    # Copy the current state and try the explosion. If it the explosion causes
+                    # a win or it doesn't cause a loss, we execute it and use the next white node from
+                    # the queue.
+                    temp_state = copy.deepcopy(current_node.state)
+                    print_board(temp_state)
+                    explode(temp_state, current_node.location)
+                    print_board(temp_state)
 
-                        # if the explosion causes us to lose, dont reset the state and current node
-                        if (not did_lose(temp_state)):
-                            current_node = queue.pop(0)
-                            current_node.state = temp_state
-                        # return True
+                    # check if we win after the explosion, if not move on to the next white
+                    # piece. if there are no more then we lost and can return False
+                    if (did_win(temp_state)): return True
+
+                    # if the explosion causes us to lose, dont reset the state and current node
+                    if (not did_lose(temp_state)):
+                        current_node = queue.pop(0)
+                        current_node.state = temp_state
+                    # return True
 
             # find path when goal is found
             if (not current_node.state["black"]):
