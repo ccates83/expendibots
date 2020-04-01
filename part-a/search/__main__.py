@@ -24,7 +24,7 @@ def main():
     print("Solving...")
 
     for white in data["white"]:
-        root_node = Node(state=data, piece_number=0, parent=None,action=None,depth=0,path_cost=0,heuristic_cost=0)
+        root_node = Node(state=data, location=(white[1], white[2]),piece_number=0, parent=None,action=None,depth=0,path_cost=0,heuristic_cost=0)
         print(root_node.state)
         if (root_node.search()): break
 
@@ -45,8 +45,6 @@ def main():
     # while(not potential_paths.empty()):
     #     next = potential_paths.get()
     #     print("# ", next)
-    #
-    # root_node.solve(potential_paths, data)
 
 if __name__ == '__main__':
     main()

@@ -231,9 +231,12 @@ def explode(board_state, location):
     Explodes the node and recursively calls explode on any neighbors.
     Returns the new board state after the explosion.
     """
+    # If we call explode on an empty tile, we are done
     if (not is_occupied(location, board_state)): return board_state
-    print("# Explosion!")
+
+    print_boom(location[0], location[1])
+
     remove_piece(board_state, location)
     for neighbor in list_neighboring_pieces(board_state, location):
-        explode(board_state, location)
+        explode(board_state, neighbor)
     return board_state
