@@ -47,7 +47,7 @@ class Node():
                 return True
 
 
-    def try_move_up(self, move_distance, pieces_to_move):
+    def try_move_up(self, move_distance, pieces_to_move, new_stack_size):
         old_x = self.state["white"][self.piece_number][1]
         old_y = self.state["white"][self.piece_number][2]
         new_x = self.state["white"][self.piece_number][1] # x stays the same
@@ -67,16 +67,24 @@ class Node():
             self.location = (new_x, new_y)
             return new_state
         else:
-            if pieces_to_move == self.state["white"][self.piece_number][0]: # if moving all pieces in stack just change the y variable
+            if pieces_to_move == self.stack_size: #self.state["white"][self.piece_number][0]: # if moving all pieces in stack just change the y variable
                 new_state["white"][self.piece_number][2] = new_y
+                remove_piece(new_state, (old_x, old_y))
+                self.location = (new_x, new_y)
             else: # else decrease number of pieces in original stack and add new piece location to white list
                 new_state["white"][self.piece_number][0] -= pieces_to_move
-                new_state["white"].append([pieces_to_move,new_x,new_y])
-            remove_piece(new_state, (old_x, old_y))
-            self.location = (new_x, new_y)
+
+                # remove the old piece and place an updated version there
+                # remove_piece(new_state, (old_x, old_y))
+                place_piece(new_state, new_stack_size, (new_x, new_y))
+                # new_state["white"].append([new_stack_size,old_x,old_y])
+                # print_board(new_state)
+            # remove_piece(new_state, (old_x, old_y))
+            self.stack_size = pieces_to_move
+            # self.location = (new_x, new_y)
             return new_state
 
-    def try_move_down(self, move_distance, pieces_to_move):
+    def try_move_down(self, move_distance, pieces_to_move, new_stack_size):
         old_x = self.state["white"][self.piece_number][1]
         old_y = self.state["white"][self.piece_number][2]
         new_x = self.state["white"][self.piece_number][1] # x stays the same
@@ -96,16 +104,27 @@ class Node():
             self.location = (new_x, new_y)
             return new_state
         else:
-            if pieces_to_move == self.state["white"][self.piece_number][0]:
+            if pieces_to_move == self.stack_size: #self.state["white"][self.piece_number][0]:
                 new_state["white"][self.piece_number][2] = new_y
+                remove_piece(new_state, (old_x, old_y))
+                self.location = (new_x, new_y)
             else:
                 new_state["white"][self.piece_number][0] -= pieces_to_move
-                new_state["white"].append([pieces_to_move,new_x,new_y])
-            remove_piece(new_state, (old_x, old_y))
-            self.location = (new_x, new_y)
+
+                # remove the old piece and place an updated version there
+                # remove_piece(new_state, (old_x, old_y))
+                place_piece(new_state, new_stack_size, (new_x, new_y))
+                # new_state["white"].append([new_stack_size,old_x,old_y])
+                # print_board(new_state)
+            # remove_piece(new_state, (old_x, old_y))
+            self.stack_size = pieces_to_move
+            # self.location = (new_x, new_y)
             return new_state
 
-    def try_move_right(self, move_distance, pieces_to_move):
+    def try_move_right(self, move_distance, pieces_to_move, new_stack_size):
+        # print_board(self.state)
+        old_stack_size = self.stack_size
+
         old_x = self.state["white"][self.piece_number][1]
         old_y = self.state["white"][self.piece_number][2]
         new_x = self.state["white"][self.piece_number][1] + move_distance # x moves right by n
@@ -125,17 +144,27 @@ class Node():
             self.location = (new_x, new_y)
             return new_state
         else:
-            if pieces_to_move == self.state["white"][self.piece_number][0]:
+            # print("here")
+            if pieces_to_move == self.stack_size: #self.state["white"][self.piece_number][0]:
                 new_state["white"][self.piece_number][1] = new_x
+                remove_piece(new_state, (old_x, old_y))
+                self.location = (new_x, new_y)
             else:
+                # print("UNSTACK")
                 new_state["white"][self.piece_number][0] -= pieces_to_move
-                new_state["white"].append([pieces_to_move,new_x,new_y])
-            remove_piece(new_state, (old_x, old_y))
-            self.location = (new_x, new_y)
+
+                # remove the old piece and place an updated version there
+                # remove_piece(new_state, (old_x, old_y))
+                place_piece(new_state, new_stack_size, (new_x, new_y))
+                # new_state["white"].append([new_stack_size,old_x,old_y])
+                # print_board(new_state)
+            # remove_piece(new_state, (old_x, old_y))
+            self.stack_size = pieces_to_move
+            # self.location = (new_x, new_y)
             return new_state
 
 
-    def try_move_left(self, move_distance, pieces_to_move):
+    def try_move_left(self, move_distance, pieces_to_move, new_stack_size):
         old_x = self.state["white"][self.piece_number][1]
         old_y = self.state["white"][self.piece_number][2]
         new_x = self.state["white"][self.piece_number][1] - move_distance # x moves left by n
@@ -155,13 +184,20 @@ class Node():
             self.location = (new_x, new_y)
             return new_state
         else:
-            if pieces_to_move == self.state["white"][self.piece_number][0]:
+            if pieces_to_move == self.stack_size: #self.state["white"][self.piece_number][0]:
                 new_state["white"][self.piece_number][1] = new_x
+                remove_piece(new_state, (old_x, old_y))
+                self.location = (new_x, new_y)
             else:
                 new_state["white"][self.piece_number][0] -= pieces_to_move
-                new_state["white"].append([pieces_to_move,new_x,new_y])
-            remove_piece(new_state, (old_x, old_y))
-            self.location = (new_x, new_y)
+
+                # remove the old piece and place an updated version there
+                # remove_piece(new_state, (old_x, old_y))
+                place_piece(new_state, new_stack_size, (new_x, new_y))
+                # new_state["white"].append([self.stack_size-pieces_to_move,old_x,old_y])
+            # remove_piece(new_state, (old_x, old_y))
+            self.stack_size = pieces_to_move
+            # self.location = (new_x, new_y)
             return new_state
 
 
@@ -195,9 +231,9 @@ class Node():
                     # a win or it doesn't cause a loss, we execute it and use the next white node from
                     # the queue.
                     temp_state = copy.deepcopy(current_node.state)
-                    print_board(temp_state)
+                    # print_board(temp_state)
                     explode(temp_state, current_node.location)
-                    print_board(temp_state)
+                    # print_board(temp_state)
 
                     # check if we win after the explosion, if not move on to the next white
                     # piece. if there are no more then we lost and can return False
@@ -218,20 +254,21 @@ class Node():
             else:
                 # print("Searching...")
                 # Try every combination of stack sizes and distances to move
+                old_location = current_node.location
                 for move_distance in range(1, self.stack_size+1):
                     for pieces_to_move in range(1, self.stack_size+1):
                         new_stack_size = self.stack_size - pieces_to_move
-                        print(move_distance, pieces_to_move)
+                        # print("Try moving {} piece {} spots".format(pieces_to_move, move_distance))
                 # new_stack_size = 1
                 # move_distance = 1
                 # pieces_to_move = 1
 
                         # try moving down
-                        if current_node.try_move_down(move_distance, pieces_to_move):
+                        if current_node.try_move_down(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
                             # print("down")
-                            new_state = current_node.try_move_down(move_distance, pieces_to_move)
+                            new_state = current_node.try_move_down(move_distance, pieces_to_move, current_node.stack_size-new_stack_size)
                             # print_board(new_state)
-                            print(new_state, " : ", visited_nodes)
+                            # print(new_state, " : ", visited_nodes)
                             # check if the down node is visited
                             if tuple(new_state["white"][-1]) not in visited_nodes:
                                 # print("moving down")
@@ -242,13 +279,16 @@ class Node():
                                 queue.append(current_node.move_down)
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
+
+                                print_move(pieces_to_move, old_location[0], old_location[1], current_node.location[0], current_node.location[1])
+                                print_board(new_state)
                             # else:
                             #     print("already visited, dead end")
 
                         # try moving right
-                        if current_node.try_move_right(move_distance, pieces_to_move):
+                        if current_node.try_move_right(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
                             # print("right")
-                            new_state = current_node.try_move_right(move_distance, pieces_to_move)
+                            new_state = current_node.try_move_right(move_distance, pieces_to_move, current_node.stack_size-new_stack_size)
                             # check if the right node is visited
                             if tuple(new_state["white"][-1]) not in visited_nodes:
                                 # create new child node
@@ -257,13 +297,16 @@ class Node():
                                 queue.append(current_node.move_right)
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)#######
+
+                                print_move(pieces_to_move, old_location[0], old_location[1], current_node.location[0], current_node.location[1])
+                                print_board(new_state)
                             # else:
                             #     print("already visited, dead end")
 
                         # try moving up
-                        if current_node.try_move_up(move_distance, pieces_to_move):
+                        if current_node.try_move_up(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
                             # print("up")
-                            new_state = current_node.try_move_up(move_distance, pieces_to_move)
+                            new_state = current_node.try_move_up(move_distance, pieces_to_move, current_node.stack_size-new_stack_size)
                             # check if the up node is visited
                             if tuple(new_state["white"][-1]) not in visited_nodes:
                                 # create new child node
@@ -272,13 +315,16 @@ class Node():
                                 queue.append(current_node.move_up)
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
+
+                                print_move(pieces_to_move, old_location[0], old_location[1], current_node.location[0], current_node.location[1])
+                                print_board(new_state)
                             # else:
                             #     print("already visited, dead end")
 
                         # try moving left
-                        if current_node.try_move_left(move_distance, pieces_to_move):
+                        if current_node.try_move_left(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
                             # print("left")
-                            new_state = current_node.try_move_left(move_distance, pieces_to_move)
+                            new_state = current_node.try_move_left(move_distance, pieces_to_move, current_node.stack_size-new_stack_size)
                             # check if the left node is visited
                             if tuple(new_state["white"][-1]) not in visited_nodes:
                                 # create new child node
@@ -287,6 +333,9 @@ class Node():
                                 queue.append(current_node.move_left)
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
+
+                                print_move(pieces_to_move, old_location[0], old_location[1], current_node.location[0], current_node.location[1])
+                                print_board(new_state)
                             # else:
                             #     print("already visited, dead end")
 
@@ -295,7 +344,7 @@ class Node():
                         # for i in queue:
                         #     print("queue",i.state["white"])
                         # print("depth_queue",depth_queue)
-                        print_board(new_state)
+                        # print_board(new_state)
 
     def heuristic_function(self):
         # checks the number of black pieces in 3x3 radius of node

@@ -148,13 +148,16 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
         whites.append((white[1], white[2]))
     for black in board_dict["black"]:
         blacks.append((black[1], black[2]))
+    w = b = 0
     for xy in coords:
         if xy not in whites and xy not in blacks:
             cells.append("   ")
         elif xy in whites:
-            cells.append(" w ") #str(board_dict[xy])[:3].center(3))
+            cells.append("{}w ".format(board_dict["white"][w][0])) #str(board_dict[xy])[:3].center(3))
+            w +=  1
         elif xy in blacks:
-            cells.append(" b ") #str(board_dict[xy])[:3].center(3))
+            cells.append("{}b ".format(board_dict["black"][b][0])) #str(board_dict[xy])[:3].center(3))
+            b +=1
     # print it
     print(template.format(message, *cells), **kwargs)
 
@@ -224,6 +227,12 @@ def remove_piece(board_state, location):
     for white in board_state["white"]:
         if (location == (white[1], white[2])):
             board_state["white"].remove(white)
+
+def place_piece(board_state, stack_size, location):
+    """
+    Places a white piece with stack size given
+    """
+    board_state["white"].append((stack_size, location[0], location[1]))
 
 
 def explode(board_state, location):
