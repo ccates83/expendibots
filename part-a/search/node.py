@@ -183,14 +183,19 @@ class Node():
             for black in current_node.state["black"]:
                 for white in current_node.state["white"]:
                     if (are_neighbors((black[1], black[2]), (white[1], white[2]))):
-                        explode(current_node.state, current_node.location)
-                        print_board(current_node.state)
+                        temp_state = copy.deepcopy(current_node.state)
+                        print_board(temp_state)
+                        explode(temp_state, current_node.location)
+                        print_board(temp_state)
 
                         # check if we win after the explosion, if not move on to the next white
                         # piece. if there are no more then we lost and can return False
-                        if (did_win(current_node.state)): return True
-                        if (did_lose(current_node.state)): return False
-                        current_node = queue.pop(0)
+                        if (did_win(temp_state)): return True
+
+                        # if the explosion causes us to lose, dont reset the state and current node
+                        if (not did_lose(temp_state)):
+                            current_node = queue.pop(0)
+                            current_node.state = temp_state
                         # return True
 
             # find path when goal is found
