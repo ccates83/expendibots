@@ -5,7 +5,7 @@ from search.util import *
 import copy
 
 class Node():
-    def __init__(self,state,location,piece_number,parent,action=None,depth=None,path_cost=None,heuristic_cost=0):
+    def __init__(self,state,stack_size,location,piece_number,parent,action=None,depth=None,path_cost=None,heuristic_cost=0):
         self.state = state
         self.piece_number = piece_number
         self.parent = parent # parent node
@@ -17,6 +17,9 @@ class Node():
 
         # Coordinate of the current piece
         self.location = location
+
+        # Stack size of the tokens in the node
+        self.stack_size = stack_size
 
         # children node
         self.move_up = None
@@ -176,9 +179,11 @@ class Node():
             current_depth = depth_queue.pop(0) # select and remove the depth for current node
             current_path_cost = path_cost_queue.pop(0) # select and remove the path cost for reaching current node
 
-            for white_pieces in current_node.state["white"]:
-                visited_nodes.add(tuple(white_pieces)) # added as a tupple to be able to put list in set
+            # for white_pieces in current_node.state["white"]:
+            #     visited_nodes.add(tuple(white_pieces)) # added as a tupple to be able to put list in set
+            visited_nodes.add(self.location)
             print("visited nodes:", visited_nodes)
+            print_board(current_node.state)
 
             # Check if our current location neighbors any of the black pieces
             for black in current_node.state["black"]:
@@ -208,56 +213,81 @@ class Node():
                 return True
 
             else:
+                print("Searching...")
+                # Try every combination of stack sizes and distances to move
+                # for move_distance in range(1, self.stack_size):
+                #     for pieces_to_move in range(1, self.stack_size):
+                #         new_stack_size = self.stack_size - pieces_to_move
+                new_stack_size = 1
+                move_distance = 1
+                pieces_to_move = 1
+
                 # try moving down
-                if current_node.try_move_down(1,self.piece_number):
-                    new_state = current_node.try_move_down(1,self.piece_number)
+                if current_node.try_move_down(move_distance, pieces_to_move):
+                    print("down")
+                    new_state = current_node.try_move_down(move_distance, pieces_to_move)
+                    print_board(new_state)
+                    print(new_state, " : ", visited_nodes)
                     # check if the down node is visited
                     if tuple(new_state["white"][-1]) not in visited_nodes:
+                        print("moving down")
                         # create new child node
-                        current_node.move_down = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+                        current_node.move_down = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
                                                 action='down',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
 
                         queue.append(current_node.move_down)
                         depth_queue.append(current_depth+1)
                         path_cost_queue.append(current_path_cost)
+                    else:
+                        print("already visited, dead end")
 
                 # try moving right
-                if current_node.try_move_right(1,self.piece_number):
-                    new_state = current_node.try_move_right(1,self.piece_number)
+                if current_node.try_move_right(move_distance, pieces_to_move):
+                    print("right")
+                    new_state = current_node.try_move_right(move_distance, pieces_to_move)
                     # check if the right node is visited
                     if tuple(new_state["white"][-1]) not in visited_nodes:
                         # create new child node
-                        current_node.move_right = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+                        current_node.move_right = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
                                                 action='right',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                         queue.append(current_node.move_right)
                         depth_queue.append(current_depth+1)
                         path_cost_queue.append(current_path_cost)#######
+                    else:
+                        print("already visited, dead end")
 
                 # try moving up
-                if current_node.try_move_up(1,self.piece_number):
-                    new_state = current_node.try_move_up(1,self.piece_number)
+                if current_node.try_move_up(move_distance, pieces_to_move):
+                    print("up")
+                    new_state = current_node.try_move_up(move_distance, pieces_to_move)
                     # check if the up node is visited
                     if tuple(new_state["white"][-1]) not in visited_nodes:
                         # create new child node
-                         current_node.move_up = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+                        current_node.move_up = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
                                                 action='up',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
-                         queue.append(current_node.move_up)
-                         depth_queue.append(current_depth+1)
-                         path_cost_queue.append(current_path_cost)
+                        queue.append(current_node.move_up)
+                        depth_queue.append(current_depth+1)
+                        path_cost_queue.append(current_path_cost)
+                    else:
+                        print("already visited, dead end")
 
                 # try moving left
-                if current_node.try_move_left(1,self.piece_number):
-                    new_state = current_node.try_move_left(1,self.piece_number)
+                if current_node.try_move_left(move_distance, pieces_to_move):
+                    print("left")
+                    new_state = current_node.try_move_left(move_distance, pieces_to_move)
                     # check if the left node is visited
                     if tuple(new_state["white"][-1]) not in visited_nodes:
                         # create new child node
-                        current_node.move_left = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+                        current_node.move_left = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
                                                 action='left',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                         queue.append(current_node.move_left)
                         depth_queue.append(current_depth+1)
                         path_cost_queue.append(current_path_cost)
+                    else:
+                        print("already visited, dead end")
 
                 # just printing to test what's happening
+                print("queue of nodes", queue)
                 for i in queue:
                     print("queue",i.state["white"])
                 print("depth_queue",depth_queue)
