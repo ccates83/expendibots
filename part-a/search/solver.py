@@ -89,7 +89,7 @@ def horizontal_distance(start, end):
 def vertical_distance(start, end):
     return abs(start[1] - start[1])
 
-def calculate_number_moves(start_loc, target_loc, step):
+def calculate_number_moves(start_loc, target_loc, step=1):
     """
     Calculates the number of moves it would take the node to reach the distination
     coordinates. Works with stacks.
