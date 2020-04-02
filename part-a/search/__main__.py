@@ -25,7 +25,7 @@ def main():
     i = 0
     for white in data["white"]:
         root_node = Node(state=data, stack_size=white[0], location=(white[1], white[2]),piece_number=0,parent=None,action=None,depth=0,path_cost=0,heuristic_cost=0)
-        if (root_node.search()):
+        if (root_node.h_search()):
             print("#\n# ----- SOLVED ----- #")
             break
 
