@@ -250,7 +250,6 @@ def explode(board_state, location, actions):
     # Append the explosion to the actions
     actions.append(("explode", location))
 
-
     remove_piece(board_state, location)
     for neighbor in list_neighboring_pieces(board_state, location):
         explode(board_state, neighbor, actions)
@@ -278,6 +277,8 @@ def horizontal_distance(start, end):
     return abs(start[0] - end[0])
 def vertical_distance(start, end):
     return abs(start[1] - start[1])
+def manhattan_distance(start, end):
+    return horizontal_distance(start, end) + vertical_distance(start, end)
 
 def calculate_number_moves(start_loc, target_loc, step=1):
     """
@@ -351,3 +352,29 @@ def count_eliminated_tiles(explosion_location, board_data, already_exploded = []
                 net_total -= 1 + count_eliminated_tiles((black[1], black[2]), board_data, already_exploded)
 
     return net_total
+
+
+def find_optimal_locations(board_data):
+    """
+    Find overlaps between as many neighbors of black as possible. This will blow
+    up the most black pieces per turn.
+    """
+    all_neighbors = []
+    for black in board_data["black"]:
+        for loc in list_neighboring_empty_tiles(black, board_data):
+            if loc not in all_neighbors:
+                all_neighbors.append(loc)
+
+    # Creates a list of the locations that will explode themost blackpieces
+    optimal_locations = []
+    most_explosions = 0
+    for loc in all_neighbors:
+        num_explosions = count_eliminated_tiles(loc, board_data, [])
+        if num_explosions > most_explosions:
+            most_explosions = num_explosions
+            optimal_locations = []
+            optimal_locations.append(loc)
+        elif num_explosions == most_explosions:
+            optimal_locations.append(loc)
+
+    return optimal_locations

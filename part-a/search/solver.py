@@ -1,30 +1,5 @@
 from search.DescendingPriorityQueue import *
 
-def find_optimal_locations(board_data):
-    """
-    Find overlaps between as many neighbors of black as possible. This will blow
-    up the most black pieces per turn.
-    """
-    all_neighbors = []
-    for black in board_data["black"]:
-        for loc in list_neighboring_empty_tiles(black, board_data):
-            if loc not in all_neighbors:
-                all_neighbors.append(loc)
-
-    # Creates a list of the locations that will explode themost blackpieces
-    optimal_locations = []
-    most_explosions = 0
-    for loc in all_neighbors:
-        num_explosions = count_eliminated_tiles(loc, board_data, [])
-        if num_explosions > most_explosions:
-            most_explosions = num_explosions
-            optimal_locations = []
-            optimal_locations.append(loc)
-        elif num_explosions == most_explosions:
-            optimal_locations.append(loc)
-
-    return optimal_locations
-
 
 def get_closest_nodes(board_data):
     """

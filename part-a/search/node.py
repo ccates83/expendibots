@@ -2,10 +2,11 @@ BOARD_SIZE_MIN = 0
 BOARD_SIZE_MAX = 7
 
 from search.util import *
-from search.DescendingPriorityQueue import *
+from search.priority_queue import *
 import copy
 
 class Node():
+    NUMBER = 0
     def __init__(self,state,stack_size,location,piece_number,parent,action=None,depth=None,path_cost=None,heuristic_cost=0):
         self.state = state
         self.piece_number = piece_number
@@ -22,7 +23,7 @@ class Node():
         # Stack size of the tokens in the node
         self.stack_size = stack_size
 
-        self.heuristic_cost = self.calculate_heuristic_cost()
+        self.heuristic_cost = None
 
         self.visited_nodes = set([self.location])
 
@@ -40,12 +41,12 @@ class Node():
         """
         Overwrite < operator for heuristic value comparison
         """
-        return self.heuristic_cost < other.heuristic_cost
+        return self.calculate_heuristic_cost() < other.calculate_heuristic_cost()
     def __gt__(self, other):
         """
         Overwrite > operator for heuristic value comparison
         """
-        return self.heuristic_cost > other.heuristic_cost
+        return self.calculate_heuristic_cost() > other.calculate_heuristic_cost()
 
 
     # check if chosen white piece move lands on black piece
@@ -327,28 +328,32 @@ class Node():
         Factors:
             - Number of black tiles self can explode
         """
-        return count_eliminated_tiles(self.location, self.state)
-
-
+        return 1 #count_eliminated_tiles(self.location, self.state)
 
     def h_search(self):
         """
         implemeting FIFO queue without heuristic for now just a simple version to make it work
         """
 
-        queue = [self] # queue of found unvisited nodes
+
+        queue = PriorityQueue()
+        queue.append((self.calculate_heuristic_cost(), self)) # queue of found unvisited nodes
 
         depth_queue = [0] # node depth
         path_cost_queue = [0] # path cost
         visited_nodes = set([]) # set of visited white pieces
 
         while queue:
-            queue.sort(reverse=True)
-            current_node = queue.pop(0) # select and remove the first white piece
+            current_node = queue.pop()[1] # select and remove the first white piece
             current_depth = depth_queue.pop(0) # select and remove the depth for current node
             current_path_cost = path_cost_queue.pop(0) # select and remove the path cost for reaching current node
             old_location = copy.deepcopy(current_node.location)
             visited_nodes.add(self.location)
+
+            # s = ""
+            # for elem in queue:
+            #     s += str(elem[0]) + ", "
+            # print("Queue h(n) vals:", s)
 
             # Check if our current location neighbors any of the black pieces
             for black in current_node.state["black"]:
@@ -374,7 +379,7 @@ class Node():
                         tup = temp_state["white"][0]
                         next = Node(state=temp_state, stack_size=tup[0], location=(tup[1], tup[2]),piece_number=0,parent=None,action=None,depth=0,path_cost=0,heuristic_cost=0)
                         next.actions = temp_actions
-                        queue.append(next)
+                        queue.append((next.calculate_heuristic_cost(), next))
                         # Continue with the current node as if we didnt perform the explosion
 
             # find path when goal is found
@@ -400,7 +405,7 @@ class Node():
                                                         action='down',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                                 current_node.move_down.actions = copy.deepcopy(current_node.actions)
                                 current_node.move_down.actions.append(("move", pieces_to_move, old_location, current_node.location))
-                                queue.append(current_node.move_down)
+                                queue.append((current_node.move_down.calculate_heuristic_cost(), current_node.move_down))
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
 
@@ -414,7 +419,7 @@ class Node():
                                                         action='right',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                                 current_node.move_right.actions = copy.deepcopy(current_node.actions)
                                 current_node.move_right.actions.append(("move", pieces_to_move, old_location, current_node.location))
-                                queue.append(current_node.move_right)
+                                queue.append((current_node.move_right.calculate_heuristic_cost(), current_node.move_right))
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
 
@@ -428,7 +433,7 @@ class Node():
                                                         action='up',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                                 current_node.move_up.actions = copy.deepcopy(current_node.actions)
                                 current_node.move_up.actions.append(("move", pieces_to_move, old_location, current_node.location))
-                                queue.append(current_node.move_up)
+                                queue.append((current_node.move_up.calculate_heuristic_cost(), current_node.move_up))
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
 
@@ -442,10 +447,9 @@ class Node():
                                                         action='left',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
                                 current_node.move_left.actions = copy.deepcopy(current_node.actions)
                                 current_node.move_left.actions.append(("move", pieces_to_move, old_location, current_node.location))
-                                queue.append(current_node.move_left)
+                                queue.append((current_node.move_left.calculate_heuristic_cost(), current_node.move_left))
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
-
 
 
 
