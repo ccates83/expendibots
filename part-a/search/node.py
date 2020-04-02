@@ -265,12 +265,12 @@ class Node():
 
                     # if the explosion causes us to lose, dont reset the state and current node
                     if (not did_lose(temp_state)):
-                        current_node = queue.pop(0)
-                        current_node.state = temp_state
-                        current_node.actions = temp_actions
-                        old_location = current_node.location
-
-                    # return True
+                        # Append the state with the explosion and moving to the queue as the next white node
+                        tup = temp_state["white"][0]
+                        next = Node(state=temp_state, stack_size=tup[0], location=(tup[1], tup[2]),piece_number=0,parent=None,action=None,depth=0,path_cost=0,heuristic_cost=0)
+                        next.actions = temp_actions
+                        queue.append(next)
+                        # Continue with the current node as if we didnt perform the explosion
 
             # find path when goal is found
             if (not current_node.state["black"]):
