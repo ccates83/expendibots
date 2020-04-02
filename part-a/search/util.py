@@ -235,17 +235,20 @@ def place_piece(board_state, stack_size, location):
     board_state["white"].append((stack_size, location[0], location[1]))
 
 
-def explode(board_state, location):
+def explode(board_state, location, actions):
     """
     Explodes the node and recursively calls explode on any neighbors.
     Returns the new board state after the explosion.
     """
     # If we call explode on an empty tile, we are done
-    if (not is_occupied(location, board_state)): return board_state
+    if (not is_occupied(location, board_state)):
+        return board_state
 
-    print_boom(location[0], location[1])
+    # Append the explosion to the actions
+    actions.append(("explode", location))
+
 
     remove_piece(board_state, location)
     for neighbor in list_neighboring_pieces(board_state, location):
-        explode(board_state, neighbor)
+        explode(board_state, neighbor, actions)
     return board_state

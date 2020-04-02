@@ -27,6 +27,9 @@ class Node():
         self.move_down = None
         self.move_right = None
 
+        # Keep track of the actions this node takes (aka the white piece)
+        self.actions = []
+
     # check if chosen white piece move lands on black piece
     def lands_on_black_check(self, new_x, new_y):
         for i in self.state["black"]:
@@ -190,29 +193,35 @@ class Node():
                 self.location = (new_x, new_y)
             else:
                 new_state["white"][self.piece_number][0] -= pieces_to_move
-
-                # remove the old piece and place an updated version there
-                # remove_piece(new_state, (old_x, old_y))
                 place_piece(new_state, new_stack_size, (new_x, new_y))
-                # new_state["white"].append([self.stack_size-pieces_to_move,old_x,old_y])
-            # remove_piece(new_state, (old_x, old_y))
+
             self.stack_size = pieces_to_move
-            # self.location = (new_x, new_y)
             return new_state
-        
+
     def print_path(self):
-        state_trace = [self.state]
-        action_trace = [self.action]
+        """
+        Print the solution path
+        """
+        while(self.actions):
+            action = self.actions.pop(0)
+            if (action[0] == "move"):
+                print_move(action[1], action[2][0], action[2][1], action[3][0], action[3][1])
+            else:
+                print_boom(action[1][0], action[1][1])
 
-        while self.parent:
 
-            self = self.parent
-            state_trace.append(self.state)
-            action_trace.append(self.action)
-
-        while state_trace:
-            state_trace.pop()
-            print(action_trace.pop())
+        # state_trace = [self.state]
+        # action_trace = [self.action]
+        #
+        # while self.parent:
+        #
+        #     self = self.parent
+        #     state_trace.append(self.state)
+        #     action_trace.append(self.action)
+        #
+        # while state_trace:
+        #     state_trace.pop()
+        #     print(action_trace.pop())
 
     def search(self):
         #implemeting FIFO queue without heuristic for now just a simple version to make it work
@@ -228,12 +237,13 @@ class Node():
             current_node = queue.pop(0) # select and remove the first white piece
             current_depth = depth_queue.pop(0) # select and remove the depth for current node
             current_path_cost = path_cost_queue.pop(0) # select and remove the path cost for reaching current node
+            old_location = copy.deepcopy(current_node.location)
 
             # for white_pieces in current_node.state["white"]:
             #     visited_nodes.add(tuple(white_pieces)) # added as a tupple to be able to put list in set
             visited_nodes.add(self.location)
             # print("visited nodes:", visited_nodes)
-            print_board(current_node.state)
+            # print_board(current_node.state)
 
             # Check if our current location neighbors any of the black pieces
             for black in current_node.state["black"]:
@@ -243,37 +253,36 @@ class Node():
                     # a win or it doesn't cause a loss, we execute it and use the next white node from
                     # the queue.
                     temp_state = copy.deepcopy(current_node.state)
-                    # print_board(temp_state)
-                    explode(temp_state, current_node.location)
-                    # print_board(temp_state)
+                    temp_actions = copy.deepcopy(current_node.actions)
+                    explode(temp_state, current_node.location, temp_actions)
 
                     # check if we win after the explosion, if not move on to the next white
                     # piece. if there are no more then we lost and can return False
-                    if (did_win(temp_state)): return True
+                    if (did_win(temp_state)):
+                        current_node.actions = temp_actions
+                        current_node.print_path()
+                        return True
 
                     # if the explosion causes us to lose, dont reset the state and current node
                     if (not did_lose(temp_state)):
-                        print(temp_state)
                         current_node = queue.pop(0)
                         current_node.state = temp_state
+                        current_node.actions = temp_actions
+                        old_location = current_node.location
+
                     # return True
 
             # find path when goal is found
             if (not current_node.state["black"]):
-                #print path***************
+                current_node.print_path()
                 return True
 
             else:
                 # print("Searching...")
                 # Try every combination of stack sizes and distances to move
-                old_location = current_node.location
                 for move_distance in range(1, self.stack_size+1):
                     for pieces_to_move in range(1, self.stack_size+1):
                         new_stack_size = self.stack_size - pieces_to_move
-                        # print("Try moving {} piece {} spots".format(pieces_to_move, move_distance))
-                # new_stack_size = 1
-                # move_distance = 1
-                # pieces_to_move = 1
 
                         # try moving down
                         if current_node.try_move_down(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
@@ -287,15 +296,11 @@ class Node():
                                 # create new child node
                                 current_node.move_down = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
                                                         action='down',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
-
+                                current_node.move_down.actions = copy.deepcopy(current_node.actions)
+                                current_node.move_down.actions.append(("move", pieces_to_move, old_location, current_node.location))
                                 queue.append(current_node.move_down)
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
-
-                                print_move(pieces_to_move, old_location[0], old_location[1], current_node.location[0], current_node.location[1])
-                                print_board(new_state)
-                            # else:
-                            #     print("already visited, dead end")
 
                         # try moving right
                         if current_node.try_move_right(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
@@ -306,14 +311,11 @@ class Node():
                                 # create new child node
                                 current_node.move_right = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
                                                         action='right',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
+                                current_node.move_right.actions = copy.deepcopy(current_node.actions)
+                                current_node.move_right.actions.append(("move", pieces_to_move, old_location, current_node.location))
                                 queue.append(current_node.move_right)
                                 depth_queue.append(current_depth+1)
-                                path_cost_queue.append(current_path_cost)#######
-
-                                print_move(pieces_to_move, old_location[0], old_location[1], current_node.location[0], current_node.location[1])
-                                print_board(new_state)
-                            # else:
-                            #     print("already visited, dead end")
+                                path_cost_queue.append(current_path_cost)
 
                         # try moving up
                         if current_node.try_move_up(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
@@ -324,14 +326,11 @@ class Node():
                                 # create new child node
                                 current_node.move_up = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
                                                         action='up',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
+                                current_node.move_up.actions = copy.deepcopy(current_node.actions)
+                                current_node.move_up.actions.append(("move", pieces_to_move, old_location, current_node.location))
                                 queue.append(current_node.move_up)
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
-
-                                print_move(pieces_to_move, old_location[0], old_location[1], current_node.location[0], current_node.location[1])
-                                print_board(new_state)
-                            # else:
-                            #     print("already visited, dead end")
 
                         # try moving left
                         if current_node.try_move_left(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
@@ -342,14 +341,11 @@ class Node():
                                 # create new child node
                                 current_node.move_left = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
                                                         action='left',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
+                                current_node.move_left.actions = copy.deepcopy(current_node.actions)
+                                current_node.move_left.actions.append(("move", pieces_to_move, old_location, current_node.location))
                                 queue.append(current_node.move_left)
                                 depth_queue.append(current_depth+1)
                                 path_cost_queue.append(current_path_cost)
-
-                                print_move(pieces_to_move, old_location[0], old_location[1], current_node.location[0], current_node.location[1])
-                                print_board(new_state)
-                            # else:
-                            #     print("already visited, dead end")
 
                         # just printing to test what's happening
                         # print("queue of nodes", queue)
