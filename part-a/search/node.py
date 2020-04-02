@@ -199,8 +199,20 @@ class Node():
             self.stack_size = pieces_to_move
             # self.location = (new_x, new_y)
             return new_state
+        
+    def print_path(self):
+        state_trace = [self.state]
+        action_trace = [self.action]
 
+        while self.parent:
 
+            self = self.parent
+            state_trace.append(self.state)
+            action_trace.append(self.action)
+
+        while state_trace:
+            state_trace.pop()
+            print(action_trace.pop())
 
     def search(self):
         #implemeting FIFO queue without heuristic for now just a simple version to make it work
