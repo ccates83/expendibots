@@ -11,24 +11,22 @@ def main():
 
     white = data["white"]
     black = data["black"]
-    print("White nodes: ", data["white"])
-    print("Black nodes: ", data["black"])
+    print("# White nodes: ", data["white"])
+    print("# Black nodes: ", data["black"])
 
 
     # TODO: find and print winning action sequence
-    print("ORIGINAL STATE:")
-    print(data)
+    print("# ORIGINAL STATE:")
     print_board(data)
 
 
-    print("Solving...")
+    print("#\n#\n# Solving...\n#")
 
     i = 0
     for white in data["white"]:
         root_node = Node(state=data, stack_size=white[0], location=(white[1], white[2]),piece_number=0,parent=None,action=None,depth=0,path_cost=0,heuristic_cost=0)
-        print(root_node.state)
         if (root_node.search()):
-            print("SOLVED")
+            print("#\n# ----- SOLVED ----- #")
             break
 
 
