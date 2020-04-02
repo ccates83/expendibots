@@ -2,6 +2,7 @@ BOARD_SIZE_MIN = 0
 BOARD_SIZE_MAX = 7
 
 from search.util import *
+from search.DescendingPriorityQueue import *
 import copy
 
 class Node():
@@ -21,6 +22,10 @@ class Node():
         # Stack size of the tokens in the node
         self.stack_size = stack_size
 
+        self.heuristic_cost = self.calculate_heuristic_cost()
+
+        self.visited_nodes = set([self.location])
+
         # children node
         self.move_up = None
         self.move_left = None
@@ -30,11 +35,25 @@ class Node():
         # Keep track of the actions this node takes (aka the white piece)
         self.actions = []
 
+
+    def __lt__(self, other):
+        """
+        Overwrite < operator for heuristic value comparison
+        """
+        return self.heuristic_cost < other.heuristic_cost
+    def __gt__(self, other):
+        """
+        Overwrite > operator for heuristic value comparison
+        """
+        return self.heuristic_cost > other.heuristic_cost
+
+
     # check if chosen white piece move lands on black piece
     def lands_on_black_check(self, new_x, new_y):
         for i in self.state["black"]:
             if new_x == i[1] and new_y == i[2]:
                 return True
+
 
     # check if chosen white piece move lands on white piece
     def lands_on_white(self, new_x, new_y, pieces_to_move):
@@ -302,40 +321,34 @@ class Node():
                                 path_cost_queue.append(current_path_cost)
 
 
-    def heuristic_function(self):
+    def calculate_heuristic_cost(self):
         """
-        checks the number of black pieces in 3x3 radius of node
+        Returns the value of the self nodeself.
+        Factors:
+            - Number of black tiles self can explode
         """
-        black_pieces_near_node = []
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                loc = (self.location[0]+i, self.location[1]+j)
-                if (is_occupied_by_black(loc, self.state)):
-                    black_pieces.append(loc)
-        return len(black_pieces_near_node)
+        return len(self.state["black"]) - count_eliminated_tiles(self.location, self.state)
+
 
 
     def h_search(self):
+        """
+        implemeting FIFO queue without heuristic for now just a simple version to make it work
+        """
 
-        queue = [(self,0)] # queue(found unvisited nodes, heuristic cost)
-        depth_queue = [(0,0)] # queue(depth, heuristic cost)
-        path_cost_queue = [(0,0)] # queue(path_cost, heuristic cost)
+        queue = PriorityQueue()
+        queue.put(self) # queue of found unvisited nodes
+
+        depth_queue = [0] # node depth
+        path_cost_queue = [0] # path cost
         visited_nodes = set([]) # set of visited white pieces
 
         while queue:
-            print(queue)
-            # sort queues based on heuristic cost
-            queue = sorted(queue, key=lambda x: x[1])
-            depth_queue = sorted(depth_queue, key=lambda x: x[1])
-            path_cost_queue = sorted(path_cost_queue, key=lambda x: x[1])
-
-            current_node = queue.pop(0)[0] # select and remove the first white piece
-            current_depth = depth_queue.pop(0)[0] # select and remove the depth for current node
-            current_path_cost = path_cost_queue.pop(0)[0] # select and remove the path cost for reaching current node
-
-            for white_pieces in current_node.state["white"]:
-                visited_nodes.add(tuple(white_pieces)) # added as a tupple to be able to put list in set
-            print("visited nodes:", visited_nodes)
+            current_node = queue.pop(0) # select and remove the first white piece
+            current_depth = depth_queue.pop(0) # select and remove the depth for current node
+            current_path_cost = path_cost_queue.pop(0) # select and remove the path cost for reaching current node
+            old_location = copy.deepcopy(current_node.location)
+            visited_nodes.add(self.location)
 
             # Check if our current location neighbors any of the black pieces
             for black in current_node.state["black"]:
@@ -345,78 +358,196 @@ class Node():
                     # a win or it doesn't cause a loss, we execute it and use the next white node from
                     # the queue.
                     temp_state = copy.deepcopy(current_node.state)
-
-                    explode(temp_state, current_node.location)
-
+                    temp_actions = copy.deepcopy(current_node.actions)
+                    explode(temp_state, current_node.location, temp_actions)
 
                     # check if we win after the explosion, if not move on to the next white
                     # piece. if there are no more then we lost and can return False
-                    if (did_win(temp_state)): return True
+                    if (did_win(temp_state)):
+                        current_node.actions = temp_actions
+                        current_node.print_path()
+                        return True
 
                     # if the explosion causes us to lose, dont reset the state and current node
                     if (not did_lose(temp_state)):
-                        current_node = queue.pop(0)
-                        current_node.state = temp_state
-                    # return True
+                        # Append the state with the explosion and moving to the queue as the next white node
+                        tup = temp_state["white"][0]
+                        next = Node(state=temp_state, stack_size=tup[0], location=(tup[1], tup[2]),piece_number=0,parent=None,action=None,depth=0,path_cost=0,heuristic_cost=0)
+                        next.actions = temp_actions
+                        queue.put(next)
+                        # Continue with the current node as if we didnt perform the explosion
 
             # find path when goal is found
             if (not current_node.state["black"]):
-                #print path***************
+                current_node.print_path()
                 return True
 
             else:
-                # try moving down
-                if current_node.try_move_down(1,self.piece_number):
-                    new_state = current_node.try_move_down(1,self.piece_number)
-                    # check if the down node is visited
-                    if tuple(new_state["white"][-1]) not in visited_nodes:
-                        h_cost = self.heuristic_function()
-                        # create new child node
-                        current_node.move_down = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
-                                                action='down',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=h_cost)
+                # print("Searching...")
+                # Try every combination of stack sizes and distances to move
+                for move_distance in range(1, self.stack_size+1):
+                    for pieces_to_move in range(1, self.stack_size+1):
+                        new_stack_size = self.stack_size - pieces_to_move
 
-                        queue.append((current_node.move_down,h_cost))
-                        depth_queue.append((current_depth+1,h_cost))
-                        path_cost_queue.append((current_path_cost,h_cost))
+                        # try moving down
+                        if current_node.try_move_down(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
+                            new_state = current_node.try_move_down(move_distance, pieces_to_move, current_node.stack_size-new_stack_size)
 
-                # try moving right
-                if current_node.try_move_right(1,self.piece_number):
-                    new_state = current_node.try_move_right(1,self.piece_number)
-                    # check if the right node is visited
-                    if tuple(new_state["white"][-1]) not in visited_nodes:
-                        h_cost = self.heuristic_function()
-                        # create new child node
-                        current_node.move_right = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
-                                                action='right',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=h_cost)
-                        queue.append((current_node.move_down,h_cost))
-                        depth_queue.append((current_depth+1,h_cost))
-                        path_cost_queue.append((current_path_cost,h_cost))
+                            # check if the down node is visited
+                            if tuple(new_state["white"][-1]) not in visited_nodes:
+                                # create new child node
+                                current_node.move_down = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+                                                        action='down',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
+                                current_node.move_down.actions = copy.deepcopy(current_node.actions)
+                                current_node.move_down.actions.append(("move", pieces_to_move, old_location, current_node.location))
+                                queue.put(current_node.move_down)
+                                depth_queue.append(current_depth+1)
+                                path_cost_queue.append(current_path_cost)
 
-                # try moving up
-                if current_node.try_move_up(1,self.piece_number):
-                    new_state = current_node.try_move_up(1,self.piece_number)
-                    # check if the up node is visited
-                    if tuple(new_state["white"][-1]) not in visited_nodes:
-                        h_cost = self.heuristic_function()
-                        # create new child node
-                        current_node.move_up = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
-                                                action='up',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=h_cost)
-                        queue.append((current_node.move_down,h_cost))
-                        depth_queue.append((current_depth+1,h_cost))
-                        path_cost_queue.append((current_path_cost,h_cost))
+                        # try moving right
+                        if current_node.try_move_right(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
+                            new_state = current_node.try_move_right(move_distance, pieces_to_move, current_node.stack_size-new_stack_size)
+                            # check if the right node is visited
+                            if tuple(new_state["white"][-1]) not in visited_nodes:
+                                # create new child node
+                                current_node.move_right = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+                                                        action='right',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
+                                current_node.move_right.actions = copy.deepcopy(current_node.actions)
+                                current_node.move_right.actions.append(("move", pieces_to_move, old_location, current_node.location))
+                                queue.put(current_node.move_right)
+                                depth_queue.append(current_depth+1)
+                                path_cost_queue.append(current_path_cost)
 
-                # try moving left
-                if current_node.try_move_left(1,self.piece_number):
-                    new_state = current_node.try_move_left(1,self.piece_number)
-                    # check if the left node is visited
-                    if tuple(new_state["white"][-1]) not in visited_nodes:
-                        h_cost = self.heuristic_function
-                        # create new child node
-                        current_node.move_left = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
-                                                action='left',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=h_cost)
-                        queue.append((current_node.move_down,h_cost))
-                        depth_queue.append((current_depth+1,h_cost))
-                        path_cost_queue.append((current_path_cost,h_cost))
+                        # try moving up
+                        if current_node.try_move_up(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
+                            new_state = current_node.try_move_up(move_distance, pieces_to_move, current_node.stack_size-new_stack_size)
+                            # check if the up node is visited
+                            if tuple(new_state["white"][-1]) not in visited_nodes:
+                                # create new child node
+                                current_node.move_up = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+                                                        action='up',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
+                                current_node.move_up.actions = copy.deepcopy(current_node.actions)
+                                current_node.move_up.actions.append(("move", pieces_to_move, old_location, current_node.location))
+                                queue.put(current_node.move_up)
+                                depth_queue.append(current_depth+1)
+                                path_cost_queue.append(current_path_cost)
 
-                # just printing to test what's happening
-                print_board(new_state)
+                        # try moving left
+                        if current_node.try_move_left(move_distance, pieces_to_move, current_node.stack_size-new_stack_size):
+                            new_state = current_node.try_move_left(move_distance, pieces_to_move, current_node.stack_size-new_stack_size)
+                            # check if the left node is visited
+                            if tuple(new_state["white"][-1]) not in visited_nodes:
+                                # create new child node
+                                current_node.move_left = Node(state=new_state,stack_size=new_stack_size,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+                                                        action='left',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=0)
+                                current_node.move_left.actions = copy.deepcopy(current_node.actions)
+                                current_node.move_left.actions.append(("move", pieces_to_move, old_location, current_node.location))
+                                queue.put(current_node.move_left)
+                                depth_queue.append(current_depth+1)
+                                path_cost_queue.append(current_path_cost)
+
+    # def h_search(self):
+    #
+    #     queue = [(self,0)] # queue(found unvisited nodes, heuristic cost)
+    #     depth_queue = [(0,0)] # queue(depth, heuristic cost)
+    #     path_cost_queue = [(0,0)] # queue(path_cost, heuristic cost)
+    #     visited_nodes = set([]) # set of visited white pieces
+    #
+    #     while queue:
+    #         print(queue)
+    #         # sort queues based on heuristic cost
+    #         queue = sorted(queue, key=lambda x: x[1])
+    #         depth_queue = sorted(depth_queue, key=lambda x: x[1])
+    #         path_cost_queue = sorted(path_cost_queue, key=lambda x: x[1])
+    #
+    #         current_node = queue.pop(0)[0] # select and remove the first white piece
+    #         current_depth = depth_queue.pop(0)[0] # select and remove the depth for current node
+    #         current_path_cost = path_cost_queue.pop(0)[0] # select and remove the path cost for reaching current node
+    #
+    #         for white_pieces in current_node.state["white"]:
+    #             visited_nodes.add(tuple(white_pieces)) # added as a tupple to be able to put list in set
+    #         print("visited nodes:", visited_nodes)
+    #
+    #         # Check if our current location neighbors any of the black pieces
+    #         for black in current_node.state["black"]:
+    #             if (are_neighbors((black[1], black[2]), current_node.location)):
+    #
+    #                 # Copy the current state and try the explosion. If it the explosion causes
+    #                 # a win or it doesn't cause a loss, we execute it and use the next white node from
+    #                 # the queue.
+    #                 temp_state = copy.deepcopy(current_node.state)
+    #
+    #                 explode(temp_state, current_node.location)
+    #
+    #
+    #                 # check if we win after the explosion, if not move on to the next white
+    #                 # piece. if there are no more then we lost and can return False
+    #                 if (did_win(temp_state)): return True
+    #
+    #                 # if the explosion causes us to lose, dont reset the state and current node
+    #                 if (not did_lose(temp_state)):
+    #                     current_node = queue.pop(0)
+    #                     current_node.state = temp_state
+    #                 # return True
+    #
+    #         # find path when goal is found
+    #         if (not current_node.state["black"]):
+    #             #print path***************
+    #             return True
+    #
+    #         else:
+    #             # try moving down
+    #             if current_node.try_move_down(1,self.piece_number):
+    #                 new_state = current_node.try_move_down(1,self.piece_number)
+    #                 # check if the down node is visited
+    #                 if tuple(new_state["white"][-1]) not in visited_nodes:
+    #                     h_cost = self.heuristic_function()
+    #                     # create new child node
+    #                     current_node.move_down = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+    #                                             action='down',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=h_cost)
+    #
+    #                     queue.append((current_node.move_down,h_cost))
+    #                     depth_queue.append((current_depth+1,h_cost))
+    #                     path_cost_queue.append((current_path_cost,h_cost))
+    #
+    #             # try moving right
+    #             if current_node.try_move_right(1,self.piece_number):
+    #                 new_state = current_node.try_move_right(1,self.piece_number)
+    #                 # check if the right node is visited
+    #                 if tuple(new_state["white"][-1]) not in visited_nodes:
+    #                     h_cost = self.heuristic_function()
+    #                     # create new child node
+    #                     current_node.move_right = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+    #                                             action='right',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=h_cost)
+    #                     queue.append((current_node.move_down,h_cost))
+    #                     depth_queue.append((current_depth+1,h_cost))
+    #                     path_cost_queue.append((current_path_cost,h_cost))
+    #
+    #             # try moving up
+    #             if current_node.try_move_up(1,self.piece_number):
+    #                 new_state = current_node.try_move_up(1,self.piece_number)
+    #                 # check if the up node is visited
+    #                 if tuple(new_state["white"][-1]) not in visited_nodes:
+    #                     h_cost = self.heuristic_function()
+    #                     # create new child node
+    #                     current_node.move_up = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+    #                                             action='up',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=h_cost)
+    #                     queue.append((current_node.move_down,h_cost))
+    #                     depth_queue.append((current_depth+1,h_cost))
+    #                     path_cost_queue.append((current_path_cost,h_cost))
+    #
+    #             # try moving left
+    #             if current_node.try_move_left(1,self.piece_number):
+    #                 new_state = current_node.try_move_left(1,self.piece_number)
+    #                 # check if the left node is visited
+    #                 if tuple(new_state["white"][-1]) not in visited_nodes:
+    #                     h_cost = self.heuristic_function
+    #                     # create new child node
+    #                     current_node.move_left = Node(state=new_state,location=current_node.location,piece_number=self.piece_number,parent=current_node,\
+    #                                             action='left',depth=current_depth+1,path_cost=current_path_cost,heuristic_cost=h_cost)
+    #                     queue.append((current_node.move_down,h_cost))
+    #                     depth_queue.append((current_depth+1,h_cost))
+    #                     path_cost_queue.append((current_path_cost,h_cost))
+    #
+    #             # just printing to test what's happening
+    #             print_board(new_state)

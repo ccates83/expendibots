@@ -1,3 +1,5 @@
+from search.DescendingPriorityQueue import *
+
 """
 This module contains some helper functions for printing actions and boards.
 Feel free to use and/or modify them to help you develop your program.
@@ -182,6 +184,7 @@ def are_neighbors(location1, location2):
     """
     Check if the two locations neighbor eachother
     """
+    if location1 == location2: return False
     return  abs(location1[0]-location2[0]) <= 1 and \
             abs(location1[1]-location2[1]) <= 1
 
@@ -252,3 +255,99 @@ def explode(board_state, location, actions):
     for neighbor in list_neighboring_pieces(board_state, location):
         explode(board_state, neighbor, actions)
     return board_state
+
+
+def list_black_neighbor_tiles(board_data):
+    """
+    Lists all neighboringn locations to black tiles. These are the locations we
+    want our white pieces to potentially be.
+    """
+    neighbors = []
+    for black in board_data["black"]:
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                loc = (black[1] + i, black[2] + j)
+                if( not is_occupied_by_black(loc, board_data)):
+                    neighbors.append(loc)
+    return neighbors
+
+
+# The next two functions take two tuple coordinates and finds the distances
+#
+def horizontal_distance(start, end):
+    return abs(start[0] - end[0])
+def vertical_distance(start, end):
+    return abs(start[1] - start[1])
+
+def calculate_number_moves(start_loc, target_loc, step=1):
+    """
+    Calculates the number of moves it would take the node to reach the distination
+    coordinates. Works with stacks.
+    Should not have to worry about pieces in the way.
+    """
+    # distance / number of spaces the stack can move
+    return  horizontal_distance(start_loc, target_loc) / step + \
+            vertical_distance(start_loc, target_loc) / step
+
+def is_occupied_by_black(location, board_data):
+    for black in board_data["black"]:
+        if location == (black[1], black[2]):
+            return True
+    return False
+
+
+def is_occupied_by_white(location, board_data):
+    for white in board_data["white"]:
+        if location == (white[1], white[2]):
+            return True
+    return False
+
+
+def is_occupied(location, board_data):
+    return  is_occupied_by_black(location, board_data) or \
+            is_occupied_by_white(location, board_data)
+
+
+def list_neighboring_empty_tiles(node, board_data):
+    """
+    Lists the locations surrounding the node.
+    """
+    neighbors = []
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if (i != 0 or j != 0) and \
+                not is_occupied_by_black((node[1] + i, node[2]  + j), board_data):
+                neighbors.append((node[1] + i, node[2]  + j))
+    return neighbors
+
+
+def count_occurances(list):
+    elements = {}
+
+    for elem in list:
+        if elem in elements:
+            elements[elem] += 1
+        else:
+            elements[elem] = 1
+    return elements
+
+
+def count_eliminated_tiles(explosion_location, board_data, already_exploded = []):
+    """
+    Calculates the number of tiles that would blow up from a given location
+    ADDS: black tiles eliminated
+    SUBTRACTS: white tiles eliminated
+    """
+    net_total = -1
+    for black in board_data["black"]:
+        if are_neighbors((black[1], black[2]), (explosion_location[0], explosion_location[1])):
+            if black not in already_exploded:
+                already_exploded.append(black)
+                net_total += 1 + count_eliminated_tiles((black[1], black[2]), board_data, already_exploded)
+    for white in board_data["white"]:
+        if are_neighbors((white[1], white[2]), (explosion_location[0], explosion_location[1])):
+            if white not in already_exploded:
+                already_exploded.append(white)
+                net_total -= 1 + count_eliminated_tiles((black[1], black[2]), board_data, already_exploded)
+
+    return net_total
