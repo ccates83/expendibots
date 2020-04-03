@@ -2,6 +2,7 @@ BOARD_SIZE_MIN = 0
 BOARD_SIZE_MAX = 7
 
 import search.my_util as MyUtil
+from search.util import *
 from search.board import *
 from search.priority_queue import *
 from copy import deepcopy
@@ -10,7 +11,10 @@ class MyNode():
     """
     My Node class, rewriting to clean up the code
     """
-    def __init__(self, board, location, stack_size, visited_nodes=[], actions=[]):
+    def __init__(self, board, location, stack_size,
+                 visited_nodes=[],
+                 actions=[],
+                 target_locations=[]):
         """
         Init
         """
@@ -34,6 +38,15 @@ class MyNode():
         Overwrite the comparison operators
         """
         return self.heuristic_cost.cmp(other.heuristic_cost)
+
+    def __lt__(self, other):
+        return self.heuristic_cost < other.heuristic_cost
+    def __gt__(self,other):
+            return self.heuristic_cost > other.heuristic_cost
+
+
+    def __str__(self):
+        return "NODE: stack={}, loc={}".format(self.stack_size, self.location)
 
 
     def print_path(self):
@@ -110,7 +123,9 @@ class MyNode():
         new_loc = (self.location[0], self.location[1]+move_distance)
 
         # Make sure it is a valid tile to move to
-        if new_loc[1] > BOARD_SIZE_MAX or self.board.is_occupied_by_black(new_loc):
+        if new_loc[1] > BOARD_SIZE_MAX or \
+           self.board.is_occupied_by_black(new_loc) or \
+           new_loc in self.visited_nodes:
             return False
 
         new_stack = self.board.get_stack_size(new_loc) + pieces_to_move
@@ -137,7 +152,9 @@ class MyNode():
         new_loc = (self.location[0], self.location[1]-move_distance)
 
         # Make sure it is a valid tile to move to
-        if new_loc[1] < BOARD_SIZE_MIN or self.board.is_occupied_by_black(new_loc):
+        if new_loc[1] < BOARD_SIZE_MIN or \
+           self.board.is_occupied_by_black(new_loc) or \
+           new_loc in self.visited_nodes:
             return False
 
         new_stack = self.board.get_stack_size(new_loc) + pieces_to_move
@@ -164,7 +181,9 @@ class MyNode():
         new_loc = (self.location[0]-move_distance, self.location[1])
 
         # Make sure it is a valid tile to move to
-        if new_loc[0] < BOARD_SIZE_MIN or self.board.is_occupied_by_black(new_loc):
+        if new_loc[0] < BOARD_SIZE_MIN or \
+           self.board.is_occupied_by_black(new_loc) or \
+           new_loc in self.visited_nodes:
             return False
 
         new_stack = self.board.get_stack_size(new_loc) + pieces_to_move
@@ -191,7 +210,9 @@ class MyNode():
         new_loc = (self.location[0]+move_distance, self.location[1])
 
         # Make sure it is a valid tile to move to
-        if new_loc[0] > BOARD_SIZE_MAX or self.board.is_occupied_by_black(new_loc):
+        if new_loc[0] > BOARD_SIZE_MAX  or \
+           self.board.is_occupied_by_black(new_loc) or \
+           new_loc in self.visited_nodes:
             return False
 
         new_stack = self.board.get_stack_size(new_loc) + pieces_to_move
@@ -213,8 +234,11 @@ class MyNode():
         """
         Heuristic formula for a node
         """
-        return 0
-
+        return 1
+        distances = []
+        for loc in MyUtil.find_optimal_locations(self.board):
+            distances.append(calculate_number_moves(self.location, loc))
+        return min(distances)
 
     def h_search(self):
         """
@@ -228,7 +252,7 @@ class MyNode():
         # While there are still paths to explore
         while not queue.isEmpty():
             current_node = queue.pop()
-
+            current_node.visited_nodes.append(current_node)
             # current_node.board.print()
 
             # Check if we are in a position to explode
@@ -259,19 +283,18 @@ class MyNode():
                 for pieces_to_move in range(1, current_node.stack_size+1):
                     # print("Trying to move {} pieces {} tiles".format(pieces_to_move, move_distance))
 
-                    # Try each direction, only adding to the queue if that location has not been visited yet:
+                    # Try each direction, only adding to the queue if valid move:
                     if current_node.try_move_up(move_distance, pieces_to_move):
-                        if (current_node.location[0], current_node.location[1]+move_distance) not in current_node.visited_nodes:
-                            queue.append(current_node.try_move_up(move_distance, pieces_to_move))
+                        queue.append(current_node.try_move_up(move_distance, pieces_to_move))
+
                     if current_node.try_move_down(move_distance, pieces_to_move):
-                        if (current_node.location[0], current_node.location[1]-move_distance) not in current_node.visited_nodes:
-                            queue.append(current_node.try_move_down(move_distance, pieces_to_move))
+                        queue.append(current_node.try_move_down(move_distance, pieces_to_move))
+
                     if current_node.try_move_right(move_distance, pieces_to_move):
-                        if (current_node.location[0]+move_distance, current_node.location[1]) not in current_node.visited_nodes:
-                            queue.append(current_node.try_move_right(move_distance, pieces_to_move))
+                        queue.append(current_node.try_move_right(move_distance, pieces_to_move))
+
                     if current_node.try_move_left(move_distance, pieces_to_move):
-                        if (current_node.location[0]-move_distance, current_node.location[1]) not in current_node.visited_nodes:
-                            queue.append(current_node.try_move_left(move_distance, pieces_to_move))
+                        queue.append(current_node.try_move_left(move_distance, pieces_to_move))
 
 
 

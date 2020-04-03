@@ -1,6 +1,9 @@
 from copy import deepcopy
 from search.util import *
 
+BOARD_SIZE_MAX = 7
+BOARD_SIZE_MIN  = 0
+
 class Board():
     """
     Class to represent the board data and perform actions on the board
@@ -89,11 +92,27 @@ class Board():
         return Board(deepcopy(self.dict))
 
 
+    def is_valid(self, location):
+        """"""
+        return location[0] > BOARD_SIZE_MIN-1 and location[0] < BOARD_SIZE_MAX and \
+               location[1] > BOARD_SIZE_MIN-1 and location[1] < BOARD_SIZE_MAX
+
+
     def list_neighboring_pieces(self, location):
         neighbors = []
         for i in range(-1, 2):
             for j in range(-1, 2):
                 loc = (location[0]+i, location[1]+j)
                 if (self.is_occupied(loc)):
+                    neighbors.append(loc)
+        return neighbors
+
+
+    def list_neighboring_black_pieces(self, location):
+        neighbors = []
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                loc = (location[0]+i, location[1]+j)
+                if (self.is_occupied_by_black(loc)):
                     neighbors.append(loc)
         return neighbors

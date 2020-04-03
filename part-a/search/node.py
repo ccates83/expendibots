@@ -336,7 +336,7 @@ class Node():
         """
 
 
-        queue = PriorityQueue()
+        queue = MyPriorityQueue()
         queue.append((self.calculate_heuristic_cost(), self)) # queue of found unvisited nodes
 
         depth_queue = [0] # node depth
