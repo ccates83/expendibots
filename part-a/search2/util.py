@@ -1,4 +1,7 @@
-from search.DescendingPriorityQueue import *
+from search2.Constants import *
+from search2.Board import *
+from copy import deepcopy
+
 
 """
 This module contains some helper functions for printing actions and boards.
@@ -142,7 +145,7 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
 # | 0,0 | 1,0 | 2,0 | 3,0 | 4,0 | 5,0 | 6,0 | 7,0 |
 # +-----+-----+-----+-----+-----+-----+-----+-----+"""
     # board the board string
-    coords = [(x,7-y) for y in range(8) for x in range(8)]
+    coords = [(x,BOARD_SIDE_LENGTH-1-y) for y in range(BOARD_SIDE_LENGTH) for x in range(BOARD_SIDE_LENGTH)]
     cells = []
     whites = []
     blacks = []
@@ -164,218 +167,86 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
     print(template.format(message, *cells), **kwargs)
 
 
-#
-# Added utility functions
-#
-def did_lose(board_state):
+# ---------------------------------------------------------------------------- #
+#                                                                              #
+#                           General Utility Functions                          #
+#                                                                              #
+# ---------------------------------------------------------------------------- #
+def list_neighbor_locations(board, loc):
     """
-    Check the board state. If there are blacks and no white pieces left we lose.
-    """
-    return board_state["black"] and not board_state["white"]
-
-def did_win(board_state):
-    """
-    Check board state. If there are no blacks left we win.
-    """
-    return not board_state["black"]
-
-
-def are_neighbors(location1, location2):
-    """
-    Check if the two locations neighbor eachother
-    """
-    if location1 == location2: return False
-    return  abs(location1[0]-location2[0]) <= 1 and \
-            abs(location1[1]-location2[1]) <= 1
-
-
-def is_occupied_by_black(location, board_data):
-    for black in board_data["black"]:
-        if location == (black[1], black[2]):
-            return True
-    return False
-
-
-def is_occupied_by_white(location, board_data):
-    for white in board_data["white"]:
-        if location == (white[1], white[2]):
-            return True
-    return False
-
-
-def is_occupied(location, board_data):
-    return  is_occupied_by_black(location, board_data) or \
-            is_occupied_by_white(location, board_data)
-
-
-def list_neighboring_pieces(board_state, location):
-    neighbors = []
-    for i in range(-1, 2):
-        for j in range(-1, 2):
-            loc = (location[0]+i, location[1]+j)
-            if (is_occupied(loc, board_state)):
-                neighbors.append(loc)
-    return neighbors
-
-
-def remove_piece(board_state, location):
-    """
-    Removes a piece from the given location on the board state
-    """
-    # Check the black locations
-    for black in board_state["black"]:
-        if (location == (black[1], black[2])):
-            board_state["black"].remove(black)
-    # Check the whites
-    for white in board_state["white"]:
-        if (location == (white[1], white[2])):
-            board_state["white"].remove(white)
-
-def place_piece(board_state, stack_size, location):
-    """
-    Places a white piece with stack size given
-    """
-    board_state["white"].append((stack_size, location[0], location[1]))
-
-
-def explode(board_state, location, actions):
-    """
-    Explodes the node and recursively calls explode on any neighbors.
-    Returns the new board state after the explosion.
-    """
-    # If we call explode on an empty tile, we are done
-    if (not is_occupied(location, board_state)):
-        return board_state
-
-    # Append the explosion to the actions
-    actions.append(("explode", location))
-
-    remove_piece(board_state, location)
-    for neighbor in list_neighboring_pieces(board_state, location):
-        explode(board_state, neighbor, actions)
-    return board_state
-
-
-def list_black_neighbor_tiles(board_data):
-    """
-    Lists all neighboringn locations to black tiles. These are the locations we
-    want our white pieces to potentially be.
-    """
-    neighbors = []
-    for black in board_data["black"]:
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                loc = (black[1] + i, black[2] + j)
-                if( not is_occupied_by_black(loc, board_data)):
-                    neighbors.append(loc)
-    return neighbors
-
-
-# The next two functions take two tuple coordinates and finds the distances
-#
-def horizontal_distance(start, end):
-    return abs(start[0] - end[0])
-def vertical_distance(start, end):
-    return abs(start[1] - start[1])
-def manhattan_distance(start, end):
-    return horizontal_distance(start, end) + vertical_distance(start, end)
-
-def calculate_number_moves(start_loc, target_loc, step=1):
-    """
-    Calculates the number of moves it would take the node to reach the distination
-    coordinates. Works with stacks.
-    Should not have to worry about pieces in the way.
-    """
-    # distance / number of spaces the stack can move
-    return  horizontal_distance(start_loc, target_loc) / step + \
-            vertical_distance(start_loc, target_loc) / step
-
-def is_occupied_by_black(location, board_data):
-    for black in board_data["black"]:
-        if location == (black[1], black[2]):
-            return True
-    return False
-
-
-def is_occupied_by_white(location, board_data):
-    for white in board_data["white"]:
-        if location == (white[1], white[2]):
-            return True
-    return False
-
-
-def is_occupied(location, board_data):
-    return  is_occupied_by_black(location, board_data) or \
-            is_occupied_by_white(location, board_data)
-
-
-def list_neighboring_empty_tiles(node, board_data):
-    """
-    Lists the locations surrounding the node.
+    List the coordinates surrounding a given location of a 2x2 grid
     """
     neighbors = []
     for i in range(-1, 2):
         for j in range(-1, 2):
-            if (i != 0 or j != 0) and \
-                not is_occupied_by_black((node[1] + i, node[2]  + j), board_data):
-                neighbors.append((node[1] + i, node[2]  + j))
+            new_loc = (loc[0]+i, loc[1]+j)
+            if board.is_valid(new_loc) and new_loc != loc:
+                neighbors.append(new_loc)
     return neighbors
 
 
-def count_occurances(list):
-    elements = {}
-
-    for elem in list:
-        if elem in elements:
-            elements[elem] += 1
-        else:
-            elements[elem] = 1
-    return elements
-
-
-def count_eliminated_tiles(explosion_location, board_data, already_exploded = []):
+def are_neighbors(loc1, loc2):
     """
-    Calculates the number of tiles that would blow up from a given location
-    ADDS: black tiles eliminated
-    SUBTRACTS: white tiles eliminated
+    Check if the two locations are within space of eachother
     """
-    net_total = -1
-    
-    for black in board_data["black"]:
-        if are_neighbors((black[1], black[2]), (explosion_location[0], explosion_location[1])):
-            if black not in already_exploded:
-                already_exploded.append(black)
-                net_total += 1 + count_eliminated_tiles((black[1], black[2]), board_data, already_exploded)
-    for white in board_data["white"]:
-        if are_neighbors((white[1], white[2]), (explosion_location[0], explosion_location[1])):
-            if white not in already_exploded:
-                already_exploded.append(white)
-                net_total -= 1 + count_eliminated_tiles((black[1], black[2]), board_data, already_exploded)
+    # Same locaiton is are not neighbors
+    if loc1 == loc2: return False
 
-    return net_total
+    return abs(loc1[0]-loc2[0]) <= 1 and abs(loc1[1]-loc2[1]) <= 1
 
 
-def find_optimal_locations(board_data):
+# ---------------------------------------------------------------------------- #
+#                                                                              #
+#                           Game Specific Utility Functions                    #
+#                                                                              #
+# ---------------------------------------------------------------------------- #
+def calculate_heuristic_value(board, loc):
     """
-    Find overlaps between as many neighbors of black as possible. This will blow
-    up the most black pieces per turn.
+    Our heuristic function.
     """
-    all_neighbors = []
-    for black in board_data["black"]:
-        for loc in list_neighboring_empty_tiles(black, board_data):
-            if loc not in all_neighbors:
-                all_neighbors.append(loc)
+    return count_eliminated_blacks(board, loc, [])
 
-    # Creates a list of the locations that will explode themost blackpieces
-    optimal_locations = []
-    most_explosions = 0
-    for loc in all_neighbors:
-        num_explosions = count_eliminated_tiles(loc, board_data, [])
-        if num_explosions > most_explosions:
-            most_explosions = num_explosions
-            optimal_locations = []
-            optimal_locations.append(loc)
-        elif num_explosions == most_explosions:
-            optimal_locations.append(loc)
 
-    return optimal_locations
+def count_eliminated_blacks(board, loc, already_exploded):
+    """
+    Counts the net gain/loss of an explosion at a given location.
+        - +1 for every black tile exploded
+    """
+    total = 0
+
+    for black in board.get_blacks():
+        black_loc = (black[1], black[2])
+        if are_neighbors(black_loc, loc):
+            if black_loc not in already_exploded:
+                already_exploded.append(black_loc)
+                total += black[0] + count_eliminated_blacks(board, black_loc, already_exploded)
+
+    return total
+
+
+def list_unique_black_neighbors(board):
+    """
+    List all the unique neighbors of every black piece on the board
+    """
+    all_neighbors = set([])
+    for black in board.get_blacks():
+        black_loc = (black[1], black[2])
+        neighbors = list_neighbor_locations(board, black_loc)
+        for neighbor in neighbors:
+            if not board.is_occupied_by_black(neighbor):
+                all_neighbors.add(neighbor)
+
+    return all_neighbors
+
+
+def list_target_locations(board):
+    """
+    Return a sorted list of the target locations with the
+    """
+    scored_targets = []
+    unique_neighbors = list_unique_black_neighbors(board)
+    for loc in unique_neighbors:
+        scored_targets.append((calculate_heuristic_value(board, loc), loc))
+
+    scored_targets.sort(reverse=True)
+    return scored_targets
