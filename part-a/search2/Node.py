@@ -10,6 +10,14 @@ class Node():
         self.location = location
         self.stack_size = stack_size
         self.target_location = target_location
+        self.heuristic = None
+        self.update_heuristic()
+
+    def __str__(self):
+        """
+        toString for debugging
+        """
+        return "Node at {} with stack {} with h(n) = {}".format(self.location, self.stack_size, self.heuristic)
 
 
     def manhattan_distance(self):
@@ -17,12 +25,21 @@ class Node():
         Calculate the manhattan distance from node's current location to the
         target location
         """
-        return abs(self.location[0] - target_location[0]) + \
-               abs(self.location[1] - target_location[1])
+        return abs(self.location[0] - self.target_location[0]) + \
+               abs(self.location[1] - self.target_location[1])
 
 
-    def move_to(self, new_loc):
+    def move_to(self, new_loc, num_pieces):
         """
         Moves the self to the new location
         """
+        self.update_heuristic()
+        self.stack_size = self.board.move_pieces(self.location, new_loc, num_pieces)
         self.location = new_loc
+
+
+    def update_heuristic(self):
+        """
+        Calculates the heuristic value based off the location
+        """
+        self.heuristic = self.manhattan_distance()

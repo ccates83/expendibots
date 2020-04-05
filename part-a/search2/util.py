@@ -200,6 +200,13 @@ def are_neighbors(loc1, loc2):
 #                           Game Specific Utility Functions                    #
 #                                                                              #
 # ---------------------------------------------------------------------------- #
+def get_piece_location(piece):
+    """
+    Given a piece tuple (n, x, y) return just the location (x, y)
+    """
+    return (piece[1], piece[2])
+
+
 def calculate_heuristic_value(board, loc):
     """
     Our heuristic function.
@@ -250,3 +257,13 @@ def list_target_locations(board):
 
     scored_targets.sort(reverse=True)
     return scored_targets
+
+
+def valid_move(board, loc, visited):
+    """
+    Check if the new location is valid.
+    Must:
+        - be on the board
+        - not have been visited in the current path (visited)
+    """
+    return board.is_valid(loc) and loc not in visited
