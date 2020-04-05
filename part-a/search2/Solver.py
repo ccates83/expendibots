@@ -39,6 +39,7 @@ class Solver():
         #       - for each target location, list the white pieces by distance (low-high)
         #           - create a start state from that piece and target location
         #           - try to solve using the start state
+
         for target in target_locations:
             for tup in list_pieces_by_distance(self.board.get_whites(), target[1]):
                 print("#\n# ----- {} to {} -----\n#".format(tup[1], target[1]))
@@ -141,6 +142,7 @@ class Solver():
             new_solver.path = deepcopy(node.path)
             return new_solver.solve(node.path)
 
+
         # Find all the next moves the node can take
         next_moves = self.find_next_moves(node, target_location, visited)
 
@@ -170,8 +172,11 @@ class Solver():
         for elem in self.path[1:]:
             if elem == "EXPLODE":
                 print_boom(curr_loc[0], curr_loc[1])
+                if self.path.index(elem)+1 != len(self.path):
+                    curr_loc = self.path[self.path.index(elem)+1][1]
             else:
                 next_loc = elem[1]
-                n = elem[1]
-                print_move(n, curr_loc[0], curr_loc[1], next_loc[0], next_loc[1])
-                curr_loc = next_loc
+                if next_loc != curr_loc:
+                    n = elem[0]
+                    print_move(n, curr_loc[0], curr_loc[1], next_loc[0], next_loc[1])
+                    curr_loc = next_loc

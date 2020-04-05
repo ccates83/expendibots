@@ -29,7 +29,8 @@ class ExpBoard():
 
     def is_valid(self, loc):
         return loc[0] < self.board_size and loc[0] > -1 and \
-               loc[1] < self.board_size and loc[1] > -1
+               loc[1] < self.board_size and loc[1] > -1 
+
 
 
     def is_occupied_by_black(self, loc):

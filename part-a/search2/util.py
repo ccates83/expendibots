@@ -272,7 +272,7 @@ def valid_move(board, loc, visited):
         - be on the board
         - not have been visited in the current path (visited)
     """
-    return board.is_valid(loc) and loc not in visited # and not board.is_occupied_by_white(loc)
+    return board.is_valid(loc) and loc not in visited and not board.is_occupied_by_black(loc)# and not board.is_occupied_by_white(loc)
 
 
 def list_pieces_by_distance(pieces, target):
