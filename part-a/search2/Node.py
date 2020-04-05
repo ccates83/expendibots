@@ -1,12 +1,11 @@
 from search2.Constants import *
-from search2.Action import *
 from search2.util import *
 
 class Node():
     """
     Class to represent a user piece and attempt to win the game.
     """
-    def __init__(self, board, location, stack_size, target_location, actions=[], depth=0, path=[]):
+    def __init__(self, board, location, stack_size, target_location, depth=0, path=[]):
         """
         Init function
         """
@@ -16,7 +15,6 @@ class Node():
         self.target_location = target_location
         self.heuristic = None
         self.update_heuristic()
-        self.actions = actions
 
         self.path = path
 
@@ -43,7 +41,6 @@ class Node():
         Moves the self to the new location
         """
         self.stack_size = self.board.move_pieces(self.location, new_loc, num_pieces)
-        self.actions.append(Action("move", self.location, new_loc, num_pieces))
         self.location = new_loc
         self.update_heuristic()
         self.path.append((num_pieces, new_loc))

@@ -12,7 +12,7 @@ def main():
 
     # TODO: find and print winning action sequence
     print("# ORIGINAL STATE:")
-    print_board(board.get_state())
+    board.print()
 
     print("#\n#\n#")
 

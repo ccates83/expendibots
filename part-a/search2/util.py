@@ -1,6 +1,5 @@
 from search2.Constants import *
 from search2.Board import *
-from search2.Action import *
 
 from copy import deepcopy
 
