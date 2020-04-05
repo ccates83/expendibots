@@ -14,7 +14,7 @@ class Node():
         self.stack_size = stack_size
         self.target_location = target_location
         self.heuristic = None
-        self.update_heuristic()
+        self.update_heuristic() # Set the heuristic value
 
         self.path = path
 
