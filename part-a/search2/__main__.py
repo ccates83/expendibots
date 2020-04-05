@@ -17,8 +17,8 @@ def main():
     print("#\n#\n#")
 
     solver = Solver(board)
-    solver.solve()
-    solver.print_actions()
+    print(solver.solve())
+    # solver.print_actions()
 
 
 if __name__ == '__main__':

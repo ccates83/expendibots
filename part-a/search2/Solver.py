@@ -9,23 +9,27 @@ class Solver():
     Class object to perform all actions of finding the winning solution to the
     game.
     """
-    def __init__(self, board):
+    def __init__(self, board, actions=[]):
         """
         Init
         """
         self.board = board
-        self.actions = []
+        self.actions = actions
 
 
-    def solve(self):
+    def solve(self, path=[]):
         """
         Finds the solution and stores every move of the successful path in self.actions
         to be printed later. Once a node reaches a goal state, call with new board state
         after the explosion.
         """
+
         # Check if we the game is over
-        if self.did_win(): return True
-        if self.did_lose(): return False
+        if self.did_win():
+            self.print_actions()
+            return True
+        if self.did_lose():
+            return False
 
         # Step 1: Find the target locations in order of priority
         target_locations = list_target_locations(self.board)
@@ -38,16 +42,16 @@ class Solver():
         #           - try to solve using the start state
         for target in target_locations:
             for tup in list_pieces_by_distance(self.board.get_whites(), target[1]):
-                print("\n\n\n")
-                print("----- {} to {} -----\n".format(tup[1], target))
+                print("#\n# ----- {} to {} -----\n#".format(tup[1], target[1]))
                 # For each targte location, try each white piece as a starting node
                 # in order, closest to the target first
                 white = tup[1]
-                node = Node(self.board, get_piece_location(white), white[0], target[1])
-                if self.search(node, target[1], visited=[]):
-                    self.actions += node.actions
+                new_path = deepcopy(path)
+                new_path.append((white[0], get_piece_location(white)))
+                node = Node(self.board, get_piece_location(white), white[0], target[1], path=new_path)
+                result = self.search(node, target[1], visited=[], path=path)
+                if result:
                     return True
-
 
     def find_next_moves(self, current_node, target_location, visited=[]):
         """
@@ -58,8 +62,8 @@ class Solver():
 
         visited.append(current_node.location)
 
-        queue = []
-        # Try each path, sort by manhattan distance low to high
+        moves = []
+        # Look ahead to each move, sort by manhattan distance low to high
         #
         # Steps:
         #   - Check if the move location is valid
@@ -77,7 +81,7 @@ class Solver():
                 up_node = deepcopy(current_node)
                 up_node.move_to(new_loc, up_node.stack_size)
                 up_node.depth += 1
-                queue.append(up_node)
+                moves.append(up_node)
 
             # down
             new_loc = (current_x, current_y - distance)
@@ -85,7 +89,7 @@ class Solver():
                 down_node = deepcopy(current_node)
                 down_node.move_to(new_loc, down_node.stack_size)
                 down_node.depth += 1
-                queue.append(down_node)
+                moves.append(down_node)
 
             # left
             new_loc = (current_x - distance, current_y)
@@ -93,7 +97,7 @@ class Solver():
                 left_node = deepcopy(current_node)
                 left_node.move_to(new_loc, left_node.stack_size)
                 left_node.depth += 1
-                queue.append(left_node)
+                moves.append(left_node)
 
             # right
             new_loc = (current_x + distance, current_y)
@@ -101,14 +105,16 @@ class Solver():
                 right_node = deepcopy(current_node)
                 right_node.move_to(new_loc, right_node.stack_size)
                 right_node.depth += 1
-                queue.append(right_node)
+                moves.append(right_node)
 
-        return queue
+        return moves
 
 
-    def search(self, node, target_location, visited=[], queue=[]):
+    def search(self, node, target_location, visited=[], path=[]):
         """
-        Find the solution path from the start  node to the target location
+        Find the solution path from the start node to the target location
+        RETURN:
+            - The path the nodes took
         """
         node.board.print()
 
@@ -128,24 +134,23 @@ class Solver():
         # Recursive Case 1 - If we hit our target, move on the the next white piece
         if node.location == target_location:
             node.explode()
-
+            node.path.append("EXPLODE")
             # Search with the next white and the updated board state
             new_solver = Solver(node.board)
-            new_solver.actions += node.actions
-            return new_solver.solve()
+            new_solver.path = deepcopy(node.path)
+            return new_solver.solve(node.path)
 
         # Find all the next moves the node can take
         next_moves = self.find_next_moves(node, target_location, visited)
 
         # Sort the queue by heuristic value
-        queue = next_moves
-        queue.sort(key=lambda node: node.heuristic)
+        next_moves.sort(key=lambda node: node.heuristic)
 
         # Try each path
-        for node in queue:
-            if self.search(node, target_location, visited, queue):
+        for node in next_moves:
+            # If the path finds a solution, back out and return true
+            if self.search(node, target_location, visited, deepcopy(node.path)):
                 return True
-
 
     def did_win(self):
         return not self.board.get_blacks()
@@ -159,8 +164,13 @@ class Solver():
         """
         Prints the actions taken by the solver to the solution of the board
         """
-        print("# -Solution- #")
-        print("# Solved in {} turns".format(len(self.actions)))
-        for action in self.actions:
-            action.print()
-        print("#    -----   #")
+        print("#\n# --- SOLUTION --- \n#")
+        curr_loc = self.path[0][1]
+        for elem in self.path[1:]:
+            if elem == "EXPLODE":
+                print_boom(curr_loc[0], curr_loc[1])
+            else:
+                next_loc = elem[1]
+                n = elem[1]
+                print_move(n, curr_loc[0], curr_loc[1], next_loc[0], next_loc[1])
+                curr_loc = next_loc
