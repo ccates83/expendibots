@@ -117,13 +117,15 @@ class Solver():
         """
         node.board.print()
 
-        # Base Case 1 - we won the game
-        if node.board.get_blacks() == []:
-            return True
+        # The first 2 base cases were moved to solve()
 
-        # Base Case 2 - we lost
-        if not node.board.get_whites() and node.board.get_blacks():
-            return False
+        # # Base Case 1 - we won the game
+        # if node.board.get_blacks() == []:
+        #     return True
+        #
+        # # Base Case 2 - we lost
+        # if not node.board.get_whites() and node.board.get_blacks():
+        #     return False
 
         # Base Case 3 - Depth limit exceeded, prune this branch
         if node.depth > node.depth_limit:
