@@ -12,6 +12,7 @@ class Action():
 
 
     def print(self):
+        print("ACTION")
         if self.type == "move":
             print_move(self.num_pieces, self.loc1[0], self.loc1[1], self.loc2[0], self.loc2[1])
         else:

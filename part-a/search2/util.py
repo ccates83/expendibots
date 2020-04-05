@@ -195,6 +195,11 @@ def are_neighbors(loc1, loc2):
     return abs(loc1[0]-loc2[0]) <= 1 and abs(loc1[1]-loc2[1]) <= 1
 
 
+def calculate_manhattan_distance(loc1, loc2):
+    return abs(loc1[0] - loc2[0]) + \
+           abs(loc1[1] - loc2[1])
+
+
 # ---------------------------------------------------------------------------- #
 #                                                                              #
 #                           Game Specific Utility Functions                    #
@@ -266,4 +271,17 @@ def valid_move(board, loc, visited):
         - be on the board
         - not have been visited in the current path (visited)
     """
-    return board.is_valid(loc) and loc not in visited
+    return board.is_valid(loc) and loc not in visited # and not board.is_occupied_by_white(loc)
+
+
+def list_pieces_by_distance(pieces, target):
+    """
+    lists the white pieces in order by closest to furthest to the target
+    """
+    lst = []
+    for piece in pieces:
+        loc = (piece[1], piece[2])
+        lst.append((calculate_manhattan_distance(loc, target), piece))
+
+    lst.sort()
+    return lst

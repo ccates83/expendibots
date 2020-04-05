@@ -1,3 +1,5 @@
+from search2.util import *
+
 class ExpBoard():
     """
     Object to represent the board and key functionality from the board data
@@ -7,6 +9,10 @@ class ExpBoard():
         self.whites = data["white"]
         self.blacks = data["black"]
         self.board_size = size
+
+
+    def print(self):
+        print_board(self.data)
 
 
     def get_state(self):
@@ -31,6 +37,17 @@ class ExpBoard():
             if loc == (black[1], black[2]):
                 return True
         return False
+
+
+    def is_occupied_by_white(self, loc):
+        for white in self.whites:
+            if loc == (white[1], white[2]):
+                return True
+        return False
+
+
+    def is_occupied(self, loc):
+        return self.is_occupied_by_black(loc) or self.is_occupied_by_white(loc)
 
 
     def place_pieces(self, loc, num_pieces):
@@ -63,6 +80,18 @@ class ExpBoard():
                 # else we do unstack, update the current locations stack size
                 else:
                     white[0] -= pieces_to_move
+
+
+    def remove_all_pieces(self, loc):
+        """
+        Removes all pieces from a given location
+        """
+        for white in self.whites:
+            if loc == (white[1], white[2]):
+                self.whites.remove(white)
+        for black in self.blacks:
+            if loc == (black[1], black[2]):
+                self.blacks.remove(black)
 
 
     def move_pieces(self, old_loc, new_loc, num_pieces):
