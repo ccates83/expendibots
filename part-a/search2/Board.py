@@ -6,6 +6,9 @@ class ExpBoard():
     Object to represent the board and key functionality from the board data
     """
     def __init__(self, data, size):
+        """
+        Init
+        """
         self.data = data
         self.whites = data["white"]
         self.blacks = data["black"]
@@ -13,28 +16,46 @@ class ExpBoard():
 
 
     def print(self):
+        """
+        Print the board
+        """
         print_board(self.data)
 
 
     def get_state(self):
+        """
+        Get the current state of the board (the dictionary of pieces)
+        """
         return self.data
 
 
     def get_whites(self):
+        """
+        Get the list of white pieces
+        """
         return self.whites
 
 
     def get_blacks(self):
+        """
+        Get the list of black pieces
+        """
         return self.blacks
 
 
     def is_valid(self, loc):
+        """
+        Check if the given location is within the board bounds
+        """
         return loc[0] < self.board_size and loc[0] > -1 and \
                loc[1] < self.board_size and loc[1] > -1
 
 
 
     def is_occupied_by_black(self, loc):
+        """
+        Check if a given location is occupied by black
+        """
         for black in self.blacks:
             if loc == (black[1], black[2]):
                 return True
@@ -42,6 +63,9 @@ class ExpBoard():
 
 
     def is_occupied_by_white(self, loc):
+        """
+        Check if a given location is occupied by white
+        """
         for white in self.whites:
             if loc == (white[1], white[2]):
                 return True
@@ -49,6 +73,9 @@ class ExpBoard():
 
 
     def is_occupied(self, loc):
+        """
+        Check if a given location is occupied
+        """
         return self.is_occupied_by_black(loc) or self.is_occupied_by_white(loc)
 
 
@@ -62,7 +89,6 @@ class ExpBoard():
         for white in self.whites:
             if loc == (white[1], white[2]):
                 white[0] += num_pieces
-                print(white[0])
                 return white[0]
 
         # if no stack, add the piece to the board
@@ -115,7 +141,6 @@ class ExpBoard():
                 if n != num_pieces:
                     self.place_pieces(old_loc, n-num_pieces)
                 new_stack_size = self.place_pieces(new_loc, num_pieces)
-                print(new_stack_size)
                 return new_stack_size
 
 

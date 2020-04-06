@@ -10,23 +10,10 @@ def main():
 
     board = ExpBoard(data, BOARD_SIDE_LENGTH)
 
-    # TODO: find and print winning action sequence
-    print("# ORIGINAL STATE:")
-    board.print()
-
-    print("#\n#\n#")
-    print("#\n#\n#")
-    print("#\n#\n#")
-    print("#\n#\n#")
-
-
-    #
     solver = Solver(board)
     solver.print()
     solver.solve()
 
-    # print("\n\n")
-    # solver.print()
 
 
     #
@@ -53,9 +40,6 @@ def main():
     # print(node.board.data)
     # print("Node's board:")
     # node.board.print()
-    # node.move_to((1, 0), node.stack_size)
-    # node.print_board()
-
     # print("Copying to a new node")
     # node2 = node.copy()
     # print(node2)

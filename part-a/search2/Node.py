@@ -5,7 +5,7 @@ class Node():
     """
     Class to represent a user piece and attempt to win the game.
     """
-    def __init__(self, board, location, stack_size, target_location, depth=0, path=[], reached_target=False):
+    def __init__(self, board, location, stack_size, target_location, depth=0, path=[]):
         """
         Init function
         """
@@ -21,9 +21,8 @@ class Node():
         self.depth_limit = 100000 #BOARD_SIDE_LENGTH * BOARD_SIDE_LENGTH / 2
         self.depth = depth
 
-        # Flag to propogate up the nodes to the original state if any branch hit the
-        # target location
-        self.reached_target = reached_target
+        self.target_reached = False
+
 
     def __str__(self):
         """
@@ -65,15 +64,11 @@ class Node():
         """
         Moves the self to the new location
         """
-        print("Moving {} from {} to {}".format(num_pieces, self.location, new_loc))
+        # print("Moving {} from {} to {}".format(num_pieces, self.location, new_loc))
         self.stack_size = self.board.move_pieces(self.location, new_loc, num_pieces)
         self.location = new_loc
         self.update_heuristic()
         self.path.append((num_pieces, new_loc))
-
-        print(self.location, self.stack_size)
-        print(self.board.data)
-
 
     def update_heuristic(self):
         """
@@ -88,7 +83,6 @@ class Node():
         """
         self.explode_helper(self.location)
         self.stack_size = 0
-
 
 
     def explode_helper(self, location):
