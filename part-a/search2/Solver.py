@@ -8,12 +8,23 @@ class Solver():
     Class object to perform all actions of finding the winning solution to the
     game.
     """
-    def __init__(self, board, actions=[]):
+    def __init__(self, board, path=[]):
         """
         Init
         """
         self.board = board
-        self.actions = actions
+        self.path = path
+
+
+    def print(self):
+        """
+        print for debugging the solver
+        """
+        print("# SOLVER OBJECT:")
+        print("# board:")
+        self.board.print()
+        print("# path:", self.path)
+        print("#\n#")
 
 
     def solve(self, path=[]):
@@ -25,9 +36,10 @@ class Solver():
 
         # Check if we the game is over
         if self.did_win():
-            self.print_actions()
+            # self.print_actions()
             return True
         if self.did_lose():
+            print("# This path failed")
             return False
 
         # Step 1: Find the target locations in order of priority
@@ -40,18 +52,46 @@ class Solver():
         #           - create a start state from that piece and target location
         #           - try to solve using the start state
 
-        for target in target_locations:
-            for tup in list_pieces_by_distance(self.board.get_whites(), target[1]):
-                print("#\n# ----- {} to {} -----\n#".format(tup[1], target[1]))
-                # For each targte location, try each white piece as a starting node
-                # in order, closest to the target first
-                white = tup[1]
-                new_path = deepcopy(path)
-                new_path.append((white[0], get_piece_location(white)))
-                node = Node(self.board, get_piece_location(white), white[0], target[1], path=new_path)
-                result = self.search(node, target[1], visited=[], path=path)
+
+
+        for piece in self.board.get_whites():
+            for target in list_targets_by_distance(piece, target_locations):
+                piece_loc = (piece[1], piece[2])
+                n = piece[0]
+                target_loc = target[1]
+                node = Node(board=deepcopy(self.board), location=piece_loc, stack_size=n, target_location=target_loc)
+                print("# Trying new start state:", node)
+                node.print_board()
+                result = self.search(node, visited=[])
+                # If the search finds a solution, return true that we found a solution to the game
+                self.print()
                 if result:
                     return True
+                print("move on")
+
+        return False
+
+        # Iterate through each target location
+        for target in target_locations:
+            piece_queue = list_pieces_by_distance(self.board.get_whites(), target[1])
+            target_loc = target[1]
+            # Iterate through each piece, matching each with each target location
+            for piece in piece_queue:
+                self.current_target_reached = False
+                loc = (piece[1][1], piece[1][2])
+                n = piece[1][0]
+                # Create a new node with the start state of the board with each piece and location
+                node = Node(board=deepcopy(self.board), location=loc, stack_size=n, target_location=target_loc)
+                # Try to solve using this node
+                print("# Trying new start state:", node)
+                node.print_board()
+                result = self.search(node, visited=[])
+                # If the search finds a solution, return true that we found a solution to the game
+                self.print()
+                if result:
+                    return True
+                print("move on")
+
 
     def find_next_moves(self, current_node, target_location, visited=[]):
         """
@@ -59,8 +99,6 @@ class Solver():
         """
         current_x = current_node.location[0]
         current_y = current_node.location[1]
-
-        visited.append(current_node.location)
 
         moves = []
         # Look ahead to each move, sort by manhattan distance low to high
@@ -73,87 +111,133 @@ class Solver():
         #
         # TODO: Allow stacking and unstacking - board class handles functionality, just
         #       need to add those moves into the queue
-        # for pieces_to_move in range(1, start_node.stack_size):
-        for distance in range(1, current_node.stack_size+1):
-            # up
-            new_loc = (current_x, current_y + distance)
-            if valid_move(self.board, new_loc, visited):
-                up_node = deepcopy(current_node)
-                up_node.move_to(new_loc, up_node.stack_size)
-                up_node.depth += 1
-                moves.append(up_node)
 
-            # down
-            new_loc = (current_x, current_y - distance)
-            if valid_move(self.board, new_loc, visited):
-                down_node = deepcopy(current_node)
-                down_node.move_to(new_loc, down_node.stack_size)
-                down_node.depth += 1
-                moves.append(down_node)
+        # Create new states for each combination of possible moves for the current node
+        #   - Move 1 to n pieces a distance of 1 to n tiles
+        for num_pieces in range(1, current_node.stack_size+1):
+            for step in range(1, current_node.stack_size+1):
+                print("#\n# Move {} pieces {} tiles".format(num_pieces, step))
 
-            # left
-            new_loc = (current_x - distance, current_y)
-            if valid_move(self.board, new_loc, visited):
-                left_node = deepcopy(current_node)
-                left_node.move_to(new_loc, left_node.stack_size)
-                left_node.depth += 1
-                moves.append(left_node)
+                # For each direction:
+                #   - copy the current node
+                #   - move the copied node using the new location and num pieces we are moving
+                #   - append newly copied and moved node to the list of moves the current node can take
 
-            # right
-            new_loc = (current_x + distance, current_y)
-            if valid_move(self.board, new_loc, visited):
-                right_node = deepcopy(current_node)
-                right_node.move_to(new_loc, right_node.stack_size)
-                right_node.depth += 1
-                moves.append(right_node)
+                # Up
+                new_loc = (current_x, current_y + step)
+                if valid_move(current_node.board, new_loc, visited):
+                    up_node = current_node.copy()
+                    up_node.move_to(new_loc, num_pieces)
+                    moves.append(up_node)
+                else:
+                    print("# {} is not a valid move location".format(new_loc))
+
+                # Down
+                new_loc = (current_x, current_y - step)
+                if valid_move(current_node.board, new_loc, visited):
+                    down_node = current_node.copy()
+                    down_node.move_to(new_loc, num_pieces)
+                    moves.append(down_node)
+                else:
+                    print("# {} is not a valid move location".format(new_loc))
+
+                # Right
+                new_loc = (current_x + step, current_y)
+                print("Move righ to", new_loc)
+                if valid_move(current_node.board, new_loc, visited):
+                    right_node = current_node.copy()
+                    right_node.move_to(new_loc, num_pieces)
+                    moves.append(right_node)
+                else:
+                    print("# {} is not a valid move location".format(new_loc))
+
+                # Left
+                new_loc = (current_x - step, current_y)
+                if valid_move(current_node.board, new_loc, visited):
+                    left_node = current_node.copy()
+                    left_node.move_to(new_loc, num_pieces)
+                    moves.append(left_node)
+                else:
+                    print("# {} is not a valid move location".format(new_loc))
 
         return moves
 
 
-    def search(self, node, target_location, visited=[], path=[]):
+    def search(self, node, visited=[]):
         """
         Find the solution path from the start node to the target location
-        RETURN:
-            - The path the nodes took
         """
-        node.board.print()
+        print("#\n# --- Trying to move <{}> to {}".format(node, node.target_location))
+        node.print_board()
+        visited.append(node.location)
+        print("# Visited locations", visited)
 
-        # The first 2 base cases were moved to solve()
 
-        # # Base Case 1 - we won the game
-        # if node.board.get_blacks() == []:
-        #     return True
-        #
-        # # Base Case 2 - we lost
-        # if not node.board.get_whites() and node.board.get_blacks():
-        #     return False
-
-        # Base Case 3 - Depth limit exceeded, prune this branch
-        if node.depth > node.depth_limit:
+        # Base Case - Depth limit exceeded, prune this branch
+        if node.at_depth_limit():
             print("---- Depth Limit Reached ----")
             return False
 
-        # Recursive Case 1 - If we hit our target, move on the the next white piece
-        if node.location == target_location:
-            node.explode()
-            node.path.append("EXPLODE")
-            # Search with the next white and the updated board state
-            new_solver = Solver(node.board)
-            new_solver.path = deepcopy(node.path)
-            return new_solver.solve(node.path)
+        # Goal state case: we have reached the target location
+        if node.at_target():
+            self.current_target_reached = True
+            explosion_node = node.copy()
+            print("\n\n\n# EXPLODE #")
+            explosion_node.explode()
+            print("# Making new solver for state after the explosion:")
+            new_solver = Solver(deepcopy(explosion_node.board))
+            print(new_solver.board.data)
+            new_solver.print()
+            # Try the solution with this explosion, only if this potential solution
+            # is successful fo we return out of here, otherwise continue without the
+            # Explosion
+            return new_solver.solve()
+            # result = new_solver.solve()
+            # if result:
+            #     print("Solution found")
+            #     return True
+
+        print("# NO EXPLOSION, continuing with:", node)
 
 
-        # Find all the next moves the node can take
-        next_moves = self.find_next_moves(node, target_location, visited)
+        # If the current node hasn't reached our target location, queue each potential
+        # move as a new node to search based off of
+        # self.print()
+        next_moves = self.find_next_moves(node, node.target_location, visited)
 
-        # Sort the queue by heuristic value
+        # Sort the next moves by which brings us closest to the target location
         next_moves.sort(key=lambda node: node.heuristic)
-
-        # Try each path
+        print("# \n# Next moves for {}:".format(node))
         for node in next_moves:
-            # If the path finds a solution, back out and return true
-            if self.search(node, target_location, visited, deepcopy(node.path)):
+            print("#\t", node.heuristic, node)
+
+        # Try each move in order
+        for move in next_moves:
+            print("# Attempting {} move to".format(move.stack_size), move.location)
+            move.print_board()
+            # Only try the moves if the node never reached its target
+            result = self.search(move, deepcopy(visited))
+            # If the path from this move finds a solution, return True
+            if result:
                 return True
+
+        print("#\n# No more moves for", node)
+        print("#")
+
+        return False
+
+        # # Find all the next moves the node can take
+        # next_moves = self.find_next_moves(node, target_location, visited)
+        #
+        # # Sort the queue by heuristic value
+        # next_moves.sort(key=lambda node: node.heuristic)
+        #
+        # # Try each path
+        # for node in next_moves:
+        #     # If the path finds a solution, back out and return true
+        #     if self.search(node, target_location, visited, deepcopy(node.path)):
+        #         return True
+
 
     def did_win(self):
         return not self.board.get_blacks()

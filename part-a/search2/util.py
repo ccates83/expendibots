@@ -159,11 +159,14 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
         if xy not in whites and xy not in blacks:
             cells.append("   ")
         elif xy in whites:
-            cells.append("{}w ".format(board_dict["white"][w][0])) #str(board_dict[xy])[:3].center(3))
-            w +=  1
+            for white in board_dict["white"]:
+                if xy == (white[1], white[2]):
+                    cells.append("{}w ".format(white[0])) #str(board_dict[xy])[:3].center(3))
+            # w +=  1
         elif xy in blacks:
-            cells.append("{}b ".format(board_dict["black"][b][0])) #str(board_dict[xy])[:3].center(3))
-            b +=1
+            for black in board_dict["black"]:
+                if xy == (black[1], black[2]):
+                    cells.append("{}b ".format(black[0]))
     # print it
     print(template.format(message, *cells), **kwargs)
 
@@ -283,6 +286,19 @@ def list_pieces_by_distance(pieces, target):
     for piece in pieces:
         loc = (piece[1], piece[2])
         lst.append((calculate_manhattan_distance(loc, target), piece))
+
+    lst.sort()
+    return lst
+
+
+def list_targets_by_distance(piece, targets):
+    """
+    List the target locations by the distance to the piece
+    """
+    lst = []
+    for target in targets:
+        loc = (target[1][0], target[1][1])
+        lst.append((calculate_manhattan_distance(loc, (piece[1], piece[2])), loc))
 
     lst.sort()
     return lst

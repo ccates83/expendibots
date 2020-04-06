@@ -5,7 +5,7 @@ class Node():
     """
     Class to represent a user piece and attempt to win the game.
     """
-    def __init__(self, board, location, stack_size, target_location, depth=0, path=[]):
+    def __init__(self, board, location, stack_size, target_location, depth=0, path=[], reached_target=False):
         """
         Init function
         """
@@ -21,11 +21,22 @@ class Node():
         self.depth_limit = 100000 #BOARD_SIDE_LENGTH * BOARD_SIDE_LENGTH / 2
         self.depth = depth
 
+        # Flag to propogate up the nodes to the original state if any branch hit the
+        # target location
+        self.reached_target = reached_target
+
     def __str__(self):
         """
         toString for debugging
         """
         return "Node at {} with stack {} with h(n) = {}".format(self.location, self.stack_size, self.heuristic)
+
+
+    def copy(self):
+        """
+        Copies self to a new node object
+        """
+        return Node(deepcopy(self.board), self.location, self.stack_size, self.target_location, path=deepcopy(self.path))
 
 
     def manhattan_distance(self):
@@ -36,14 +47,32 @@ class Node():
         return calculate_manhattan_distance(self.location, self.target_location)
 
 
+    def at_depth_limit(self):
+        """
+        Check if the node has reached the depth limit of the search
+        """
+        return self.depth > self.depth_limit
+
+
+    def at_target(self):
+        """
+        Check if the node is at its target location
+        """
+        return self.location == self.target_location
+
+
     def move_to(self, new_loc, num_pieces):
         """
         Moves the self to the new location
         """
+        print("Moving {} from {} to {}".format(num_pieces, self.location, new_loc))
         self.stack_size = self.board.move_pieces(self.location, new_loc, num_pieces)
         self.location = new_loc
         self.update_heuristic()
         self.path.append((num_pieces, new_loc))
+
+        print(self.location, self.stack_size)
+        print(self.board.data)
 
 
     def update_heuristic(self):
@@ -58,6 +87,8 @@ class Node():
         Explode the node and update the board accordingly
         """
         self.explode_helper(self.location)
+        self.stack_size = 0
+
 
 
     def explode_helper(self, location):
@@ -71,3 +102,10 @@ class Node():
         self.board.remove_all_pieces(location)
         for neighbor in list_neighbor_locations(self.board, location):
             self.explode_helper(neighbor)
+
+
+    def print_board(self):
+        """
+        Print the nodes board
+        """
+        self.board.print()

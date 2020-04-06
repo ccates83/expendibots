@@ -1,4 +1,5 @@
 from search2.util import *
+import sys
 
 class ExpBoard():
     """
@@ -29,7 +30,7 @@ class ExpBoard():
 
     def is_valid(self, loc):
         return loc[0] < self.board_size and loc[0] > -1 and \
-               loc[1] < self.board_size and loc[1] > -1 
+               loc[1] < self.board_size and loc[1] > -1
 
 
 
@@ -61,6 +62,7 @@ class ExpBoard():
         for white in self.whites:
             if loc == (white[1], white[2]):
                 white[0] += num_pieces
+                print(white[0])
                 return white[0]
 
         # if no stack, add the piece to the board
@@ -77,10 +79,12 @@ class ExpBoard():
                 # If we dont need to unstack, just remove that piece from the board
                 if num_pieces == white[0]:
                     self.whites.remove(white)
-                    return
                 # else we do unstack, update the current locations stack size
                 else:
-                    white[0] -= pieces_to_move
+                    new_white = (white[0]-num_pieces, white[1], white[2])
+                    self.whites.remove(white)
+                    self.whites.append(new_white)
+                    # sys.exit(1)
 
 
     def remove_all_pieces(self, loc):
@@ -106,5 +110,17 @@ class ExpBoard():
         # find the piece we are moving
         for white in self.whites:
             if old_loc == (white[1], white[2]):
+                n = white[0]
                 self.remove_pieces(old_loc, num_pieces)
-                return self.place_pieces(new_loc, num_pieces)
+                if n != num_pieces:
+                    self.place_pieces(old_loc, n-num_pieces)
+                new_stack_size = self.place_pieces(new_loc, num_pieces)
+                print(new_stack_size)
+                return new_stack_size
+
+
+    def update_board(self, new_data):
+        """
+        Updates the boards data from a new dictionary
+        """
+        self.data = new_data
