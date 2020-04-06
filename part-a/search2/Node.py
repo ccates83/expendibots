@@ -21,8 +21,6 @@ class Node():
         self.depth_limit = 100000 #BOARD_SIDE_LENGTH * BOARD_SIDE_LENGTH / 2
         self.depth = depth
 
-        self.target_reached = False
-
 
     def __str__(self):
         """
