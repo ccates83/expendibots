@@ -1,118 +1,150 @@
-from copy import deepcopy
 from search.util import *
+import sys
 
-BOARD_SIZE_MAX = 7
-BOARD_SIZE_MIN  = 0
-
-class Board():
+class ExpBoard():
     """
-    Class to represent the board data and perform actions on the board
+    Object to represent the board and key functionality from the board data
     """
-    def __init__(self, data):
+    def __init__(self, data, size):
         """
-        Init: takes in a dictionary of players pieces
+        Init
         """
-        self.dict = data
+        self.data = data
+        self.whites = data["white"]
+        self.blacks = data["black"]
+        self.board_size = size
 
 
     def print(self):
-        print_board(self.dict)
-
-
-    def place_piece(self, n, loc):
         """
-        Places n pieces at the given location
+        Print the board
         """
-        self.dict["white"].append((n, loc[0], loc[1]))
+        print_board(self.data)
 
 
-    def remove_piece(self, loc):
+    def get_state(self):
         """
-        Removes a piece from the given location
+        Get the current state of the board (the dictionary of pieces)
         """
-        # Check the black locations
-        for black in self.dict["black"]:
-            if (loc == (black[1], black[2])):
-                self.dict["black"].remove(black)
-        # Check the whites
-        for white in self.dict["white"]:
-            if (loc == (white[1], white[2])):
-                self.dict["white"].remove(white)
-
-
-    def get_stack_size(self, location):
-        """
-        Gives the stack size at a given location
-        """
-        for white in self.dict["white"]:
-            if location == (white[1], white[2]):
-                return white[0]
-        for black in self.dict["black"]:
-            if location == (black[1], black[2]):
-                return black[0]
-        return 0
-
-
-    def are_neighbors(self, location1, location2):
-        """
-        Check if the two locations neighbor eachother
-        """
-        if location1 == location2: return False
-        return  abs(location1[0]-location2[0]) <= 1 and \
-                abs(location1[1]-location2[1]) <= 1
-
-
-    def is_occupied_by_black(self, location):
-        for black in self.dict["black"]:
-            if location == (black[1], black[2]):
-                return True
-        return False
-
-
-    def is_occupied_by_white(self, location):
-        for white in self.dict["white"]:
-            if location == (white[1], white[2]):
-                return True
-        return False
-
-
-    def is_occupied(self, location):
-        return  self.is_occupied_by_black(location) or \
-                self.is_occupied_by_white(location)
+        return self.data
 
 
     def get_whites(self):
-        return self.dict["white"]
+        """
+        Get the list of white pieces
+        """
+        return self.whites
 
 
     def get_blacks(self):
-        return self.dict["black"]
-
-    def copy(self):
-        return Board(deepcopy(self.dict))
-
-
-    def is_valid(self, location):
-        """"""
-        return location[0] > BOARD_SIZE_MIN-1 and location[0] < BOARD_SIZE_MAX and \
-               location[1] > BOARD_SIZE_MIN-1 and location[1] < BOARD_SIZE_MAX
+        """
+        Get the list of black pieces
+        """
+        return self.blacks
 
 
-    def list_neighboring_pieces(self, location):
-        neighbors = []
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                loc = (location[0]+i, location[1]+j)
-                if (self.is_occupied(loc)):
-                    neighbors.append(loc)
-        return neighbors
+    def is_valid(self, loc):
+        """
+        Check if the given location is within the board bounds
+        """
+        return loc[0] < self.board_size and loc[0] > -1 and \
+               loc[1] < self.board_size and loc[1] > -1
 
 
-    def list_neighboring_black_pieces(self, location):
-        neighbors = []
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                loc = (location[0]+i, location[1]+j)
-                if (self.is_occupied_by_black(loc)):
-                    neighbors.append(loc)
-        return neighbors
+
+    def is_occupied_by_black(self, loc):
+        """
+        Check if a given location is occupied by black
+        """
+        for black in self.blacks:
+            if loc == (black[1], black[2]):
+                return True
+        return False
+
+
+    def is_occupied_by_white(self, loc):
+        """
+        Check if a given location is occupied by white
+        """
+        for white in self.whites:
+            if loc == (white[1], white[2]):
+                return True
+        return False
+
+
+    def is_occupied(self, loc):
+        """
+        Check if a given location is occupied
+        """
+        return self.is_occupied_by_black(loc) or self.is_occupied_by_white(loc)
+
+
+    def place_pieces(self, loc, num_pieces):
+        """
+        Places the number of pieces specified to the location on the board
+        Return:
+            - Number of pieces in the location
+        """
+        n = num_pieces
+        # First check if we need to stack
+        for white in self.whites:
+            if loc == (white[1], white[2]):
+                n += white[0]
+                self.remove_pieces(loc, white[0])
+
+        # if no stack, add the piece to the board
+        self.whites.append((n, loc[0], loc[1]))
+        return n
+
+
+    def remove_pieces(self, loc, num_pieces):
+        """
+        Removes the number of pieces from the given location
+        """
+        for white in self.whites:
+            if loc == (white[1], white[2]):
+                # If we dont need to unstack, just remove that piece from the board
+                if num_pieces == white[0]:
+                    self.whites.remove(white)
+                # else we do unstack, update the current locations stack size
+                else:
+                    new_white = (white[0]-num_pieces, white[1], white[2])
+                    self.whites.remove(white)
+                    self.whites.append(new_white)
+                    # sys.exit(1)
+
+
+    def remove_all_pieces(self, loc):
+        """
+        Removes all pieces from a given location
+        """
+        for white in self.whites:
+            if loc == (white[1], white[2]):
+                self.whites.remove(white)
+        for black in self.blacks:
+            if loc == (black[1], black[2]):
+                self.blacks.remove(black)
+
+
+    def move_pieces(self, old_loc, new_loc, num_pieces):
+        """
+        Move the number of pieces specified from the old location to the new location
+        updating the board data accordingly
+
+        Return:
+            - Number of pieces in the new location
+        """
+        # find the piece we are moving
+        for white in self.whites:
+            if old_loc == (white[1], white[2]):
+                n = white[0]
+                self.remove_pieces(old_loc, num_pieces)
+                new_stack_size = n + self.place_pieces(new_loc, num_pieces)
+                return new_stack_size
+
+
+    def update_board(self, new_data):
+        """
+        Updates the boards data from a new dictionary
+        """
+        self.data = new_data
