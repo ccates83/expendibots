@@ -85,14 +85,15 @@ class ExpBoard():
         Return:
             - Number of pieces in the location
         """
+        n = num_pieces
         # First check if we need to stack
         for white in self.whites:
             if loc == (white[1], white[2]):
-                white[0] += num_pieces
-                return white[0]
+                n += white[0]
+                self.remove_pieces(loc, white[0])
 
         # if no stack, add the piece to the board
-        self.whites.append((num_pieces, loc[0], loc[1]))
+        self.whites.append((n, loc[0], loc[1]))
         return num_pieces
 
 
@@ -138,9 +139,7 @@ class ExpBoard():
             if old_loc == (white[1], white[2]):
                 n = white[0]
                 self.remove_pieces(old_loc, num_pieces)
-                if n != num_pieces:
-                    self.place_pieces(old_loc, n-num_pieces)
-                new_stack_size = self.place_pieces(new_loc, num_pieces)
+                new_stack_size = n + self.place_pieces(new_loc, num_pieces)
                 return new_stack_size
 
 

@@ -282,13 +282,8 @@ def list_pieces_by_distance(pieces, target):
     """
     lists the white pieces in order by closest to furthest to the target
     """
-    lst = []
-    for piece in pieces:
-        loc = (piece[1], piece[2])
-        lst.append((calculate_manhattan_distance(loc, target), piece))
-
-    lst.sort()
-    return lst
+    pieces.sort(key=lambda piece: calculate_manhattan_distance(target, (piece[1], piece[2]) ))
+    return pieces
 
 
 def list_targets_by_distance(piece, targets):
@@ -297,8 +292,8 @@ def list_targets_by_distance(piece, targets):
     """
     lst = []
     for target in targets:
-        loc = (target[1][0], target[1][1])
-        lst.append((calculate_manhattan_distance(loc, (piece[1], piece[2])), loc))
+        print(piece, target)
+        lst.append((calculate_manhattan_distance(target, (piece[1], piece[2])), target))
 
     lst.sort()
     return lst

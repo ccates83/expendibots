@@ -1,5 +1,7 @@
 from search2.util import *
 from search2.Node import *
+from search2.Board import *
+from search2.Constants import *
 
 from copy import deepcopy
 
@@ -32,16 +34,20 @@ class Solver():
         to be printed later. Once a node reaches a goal state, call with new board state
         after the explosion.
         """
+        print("### Starting new search with start state:")
+        self.print()
 
         # Check if we the game is over
         if self.did_win():
-            self.print_actions()
+            # self.print_actions()
             return True
         if self.did_lose():
+            print("We lost")
             return False
 
         # Step 1: Find the target locations in order of priority
-        target_locations = list_target_locations(self.board)
+        target_locations = self.get_targets()
+        print(target_locations)
 
         # Step 2: Iterate through start states and solve
         #
@@ -50,12 +56,16 @@ class Solver():
         #           - If we have already tried the target location with that piece, stop
         #           - create a start state from that piece and target location
         #           - try to solve using the start state
-        for piece in self.board.get_whites():
-            for target in list_targets_by_distance(piece, target_locations):
+        # for piece in self.board.get_whites():
+        #     for target in list_targets_by_distance(piece, target_locations):
+        for target in target_locations:
+            for piece in list_pieces_by_distance(self.board.get_whites(), target):
+                print("Searching for target:", target)
                 self.target_reached = False
                 piece_loc = (piece[1], piece[2])
                 n = piece[0]
-                target_loc = target[1]
+                # target_loc = target[1]
+                target_loc = target
                 new_path = deepcopy(self.path)
                 new_path.append((n, piece_loc))
 
@@ -135,6 +145,9 @@ class Solver():
         """
         Find the solution path from the start node to the target location
         """
+        print("Searching...")
+        print(node, "to", node.target_location)
+        node.print_board()
         # If we call search and the current target location has already been tried,
         # stop seaching
         if self.target_reached:
@@ -158,6 +171,13 @@ class Solver():
             # Explosion
             new_solver.path = deepcopy(node.path)
             new_solver.path.append("EXPLODE")
+            new_solver.print_actions()
+            print("Continuing from this solution...")
+            new_solver.print()
+            if new_solver.did_win():
+                print("#\m#\n# WE WON HERE \n#\n#")
+                new_solver.print_actions()
+                return True
             return new_solver.solve()
 
         # If the current node hasn't reached our target location, queue each potential
@@ -208,3 +228,26 @@ class Solver():
                     n = elem[0]
                     print_move(n, curr_loc[0], curr_loc[1], next_loc[0], next_loc[1])
                     curr_loc = next_loc
+
+
+    def get_targets(self):
+        """
+        Get the target locations for the board state
+        """
+        targets = []
+        potential_targets = list_target_locations(self.board)
+        for target in potential_targets:
+            loc = target[1]
+            test_board = ExpBoard(deepcopy(self.board.data), BOARD_SIDE_LENGTH)
+            test_board.place_pieces(loc, 1)
+            test_node = Node(board=test_board, location=loc, stack_size=1, target_location=loc)
+            test_node.explode()
+            # test_node.print_board()
+            if not test_node.board.get_whites() and test_node.board.get_blacks():
+                print(loc, "no good")
+            else:
+                print(loc, "GOOD TARGET")
+                targets.append(loc)
+
+        targets.sort(key=lambda loc: calculate_heuristic_value(self.board, loc), reverse=True)
+        return targets
