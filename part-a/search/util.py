@@ -1,5 +1,5 @@
 from search.Constants import *
-from search.Board import *
+from search.board import *
 
 from copy import deepcopy
 

@@ -1,8 +1,8 @@
 import sys
 import json
 
-from search.Board import *
-from search.Solver import *
+from search.board import *
+from search.solver import *
 
 def main():
     with open(sys.argv[1]) as file:

@@ -1,6 +1,6 @@
 from search.util import *
-from search.Node import *
-from search.Board import *
+from search.node import *
+from search.board import *
 from search.Constants import *
 
 from copy import deepcopy
