@@ -63,10 +63,12 @@ class Node():
         Moves the self to the new location
         """
         # print("Moving {} from {} to {}".format(num_pieces, self.location, new_loc))
-        self.stack_size = self.board.move_pieces(self.location, new_loc, num_pieces)
+        self.board.move_pieces(self.location, new_loc, num_pieces)
+        self.path.append((num_pieces, self.location, new_loc))
         self.location = new_loc
+        self.update_stack_size()
         self.update_heuristic()
-        self.path.append((num_pieces, new_loc))
+
 
     def update_heuristic(self):
         """
@@ -101,3 +103,9 @@ class Node():
         Print the nodes board
         """
         self.board.print()
+
+
+    def update_stack_size(self):
+        for white in self.board.get_whites():
+            if (white[1], white[2]) == self.location:
+                self.stack_size = white[0]

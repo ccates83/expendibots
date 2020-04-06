@@ -94,7 +94,7 @@ class ExpBoard():
 
         # if no stack, add the piece to the board
         self.whites.append((n, loc[0], loc[1]))
-        return num_pieces
+        return n
 
 
     def remove_pieces(self, loc, num_pieces):
