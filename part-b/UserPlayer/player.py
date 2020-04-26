@@ -51,7 +51,10 @@ class UserPlayer:
     def is_valid_move(self, old_coord, new_coord, num_pieces):
         return True
 
-    def get_piece_to_move(self):
+    def get_coordinates(self):
+        """
+        Gets the coordinates of a piece from the user.
+        """
         print("x coord of piece:")
         x = int(input())
         print("y coord of piece:")
@@ -60,8 +63,12 @@ class UserPlayer:
         return (x, y)
 
     def choose_action(self):
+        """
+        Takes user input in order to perform an action to take.
+        """
+
         print("Please enter the coordinates of the piece you wish to take an action with")
-        old_coord = self.get_piece_to_move()
+        old_coord = self.get_coordinates()
 
         print("Move or explode? type 'move' or 'boom'")
         action = input()
@@ -71,7 +78,7 @@ class UserPlayer:
             return ("BOOM", old_coord)
         elif action == "move":
             print("You chose to move, where would you like to move to?")
-            new_loc = self.get_piece_to_move()
+            new_loc = self.get_coordinates()
             print("How many pieces would you like to move?")
             n = int(input())
 
