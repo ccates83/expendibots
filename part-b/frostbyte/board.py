@@ -45,13 +45,16 @@ class Board():
                     self.perform_boom((loc[0]+i, loc[1]+j))
 
 
-
-
-
-
     def is_occupied(self, loc):
+        return self.is_occupied_by_black(loc) or self.is_occupied_by_white(loc)
+
+
+    def is_occupied_by_white(self, loc):
         for white in self.state["white"]:
             if loc == white[1]: return True
+        return False
+
+    def is_occupied_by_black(self, loc):
         for black in self.state["black"]:
             if loc == black[1]: return True
 

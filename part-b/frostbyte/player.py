@@ -1,4 +1,5 @@
 from frostbyte.board import *
+from frostbyte.algorithm import *
 
 
 class ExamplePlayer:
@@ -18,6 +19,7 @@ class ExamplePlayer:
         # TODO: Set up state representation.
         # Representation of the board for the player class
         self.state = Board()
+        self.colour = colour
 
 
     def action(self):
@@ -31,6 +33,14 @@ class ExamplePlayer:
         """
         # TODO: Decide what action to take, and return it
         self.state.print()
+        calculate_next_move(self.colour, self.state)
+        #Algorithm idea -
+        #
+        #   We run our greedy alogorithm to get where we think they will go, then run ouurs on the new state
+        #   from their probable move and choose our move based on that.
+        #
+
+
         return ("BOOM", (0, 0))
 
 
@@ -54,3 +64,35 @@ class ExamplePlayer:
         """
         # TODO: Update state representation in response to action.
         self.state.update(action)
+
+
+    #
+    #   HELPERS
+    #
+
+    # Game State functions
+    def did_win(self):
+        """
+        Check if the current player won
+        """
+        if self.colour == "white":
+            return self.state["white"] and not self.state["black"]
+        else:
+            return not self.state["white"] and self.state["black"]
+
+    def did_lose(self):
+        """
+        Check if the current player lost
+        """
+        if self.colour == "white":
+            return not self.state["white"]
+        else:
+            return not self.state["black"]
+
+
+    # Algorithmic functions
+    def two_ply(self):
+        """
+        Search two moves ahead
+        """
+        pass
