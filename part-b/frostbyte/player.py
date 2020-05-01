@@ -41,7 +41,7 @@ class ExamplePlayer:
         #
 
 
-        return ("BOOM", (0, 0))
+        return ("BOOM", (7, 7))
 
 
     def update(self, colour, action):
@@ -64,6 +64,8 @@ class ExamplePlayer:
         """
         # TODO: Update state representation in response to action.
         self.state.update(action)
+
+
 
 
     #
