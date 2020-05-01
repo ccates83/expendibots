@@ -1,3 +1,4 @@
+from frostbyte.board import *
 
 class UserPlayer:
     def __init__(self, colour):
@@ -12,6 +13,7 @@ class UserPlayer:
         strings "white" or "black" correspondingly.
         """
         # TODO: Set up state representation.
+        self.state = Board()
 
 
     def action(self):
@@ -24,7 +26,7 @@ class UserPlayer:
         represented based on the spec's instructions for representing actions.
         """
         # TODO: Decide what action to take, and return it
-
+        self.state.print()
         return self.choose_action()
 
 
@@ -47,6 +49,8 @@ class UserPlayer:
         against the game rules).
         """
         # TODO: Update state representation in response to action.
+        print("UPDATING")
+        self.state.update(action)
 
     def is_valid_move(self, old_coord, new_coord, num_pieces):
         return True
