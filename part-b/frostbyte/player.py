@@ -33,15 +33,8 @@ class ExamplePlayer:
         # TODO: Decide what action to take, and return it
         self.state.print()
 
-        actions = [
-            ("MOVE", 1, (0,1), (1, 1)),
-            ("MOVE", 1, (1, 1), (1, 2)),
-            ("BOOM", (1, 2))
-        ]
-        for action in actions:
-            self.state.perform_action(self.colour, action)
+        for action in list_all_possible_moves(self.colour, self.state):
             print(action)
-            self.state.print()
 
 
     def update(self, colour, action):

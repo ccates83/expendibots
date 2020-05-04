@@ -78,8 +78,10 @@ class Board():
         for piece in self.state[colour]:
             # Find the piece
             if piece[1] == loc1:
+                print(piece)
                 #Decide whether to unstack or move them all
                 if piece[0] == n:
+                    print(n, piece[0])
                     # Move all pieces
                     self.clear_location(loc1)
                 else:
@@ -88,6 +90,7 @@ class Board():
                     self.clear_location(loc1)
                     self.state[colour].append(new_piece)
                 self.place_pieces(colour, n, loc2)
+                return
 
 
 
@@ -118,7 +121,7 @@ class Board():
                 return
         for black in self.state["black"]:
             if black[1] == loc:
-                self.state["black"].remove(white)
+                self.state["black"].remove(black)
                 return
 
 
@@ -167,3 +170,35 @@ class Board():
         Check if a given location is occupied
         """
         return self.is_occupied_by_black(loc) or self.is_occupied_by_white(loc)
+
+
+    def in_bounds(self, loc):
+        """
+        Check if a location is on the board
+        """
+        return loc[0] > -1 and loc[0] < 8 and loc[1] > -1 and loc[1] < 8
+
+
+    def is_valid_action(self, colour, action):
+        """
+        Check if an action is valid for this board and the given player
+        """
+        if action[0] == 'BOOM':
+            in_bounds = self.in_bounds(action[1])
+            if colour == "white":
+                correct_piece = self.is_occupied_by_white(action[1])
+            else:
+                correct_piece = self.is_occupied_by_black(action[1])
+            return in_bounds and correct_piece
+
+        dest_in_bounds = self.in_bounds(action[3])
+        selected_in_bounds = self.in_bounds(action[2])
+        if colour == "white":
+            correct_piece = self.is_occupied_by_white(action[2])
+            good_target = not self.is_occupied(action[3]) or self.is_occupied_by_white(action[3])
+        else:
+            correct_piece = self.is_occupied_by_black(action[2])
+            good_target = not self.is_occupied(action[3]) or self.is_occupied_by_black(action[3])
+
+
+        return dest_in_bounds and selected_in_bounds and correct_piece and good_target
