@@ -1,4 +1,7 @@
 from frostbyte.board import *
+from frostbyte.algorithm import *
+from frostbyte.node import *
+import random
 
 
 class ExamplePlayer:
@@ -19,6 +22,7 @@ class ExamplePlayer:
         # Representation of the board for the player class
         self.state = Board()
         self.colour = colour
+        self.actions = []
 
 
     def action(self):
@@ -33,15 +37,11 @@ class ExamplePlayer:
         # TODO: Decide what action to take, and return it
         self.state.print()
 
-        actions = [
-            ("MOVE", 1, (0,1), (1, 1)),
-            ("MOVE", 1, (1, 1), (1, 2)),
-            ("BOOM", (1, 2))
-        ]
-        for action in actions:
-            self.state.perform_action(self.colour, action)
-            print(action)
-            self.state.print()
+        actions = list_filtered_actions(self.colour, deepcopy(self.state))
+        action = actions[random.randint(0, len(actions)-1)]
+        self.actions.append(action)
+
+        return action
 
 
     def update(self, colour, action):
@@ -65,7 +65,9 @@ class ExamplePlayer:
         # TODO: Update state representation in response to action.
         self.state.update(action, colour)
 
-
+        if self.did_win() or self.did_lose():
+            f = open("records.txt", "a")
+            f.write(self.actions)
 
 
     #
@@ -80,15 +82,28 @@ class ExamplePlayer:
         Check if the current player won
         """
         if self.colour == "white":
-            return self.state["white"] and not self.state["black"]
+            return self.state.state["white"] and not self.state.state["black"]
         else:
-            return not self.state["white"] and self.state["black"]
+            return not self.state.state["white"] and self.state.state["black"]
 
     def did_lose(self):
         """
         Check if the current player lost
         """
         if self.colour == "white":
-            return not self.state["white"]
+            return not self.state.state["white"]
         else:
-            return not self.state["black"]
+            return not self.state.state["black"]
+
+
+    # Algorithmic functions
+    def two_ply(self, root_node):
+        """
+        Search two moves ahead
+        """
+        current_best = -100000 # Init to a crazy low value that will never be the best, first option will take over
+
+        for child in root_node.children:
+            print(child.colour, ":", child)
+            # for grandchild in child.children:
+            #     print("\tTheir move score:", grandchild.value)

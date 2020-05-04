@@ -50,9 +50,10 @@ class UserPlayer:
         """
         # TODO: Update state representation in response to action.
         print("UPDATING")
-        self.state.update(action)
+        self.state.update(action, colour)
 
     def is_valid_move(self, old_coord, new_coord, num_pieces):
+        if not self.state.is_occupied(old_coord): return False
         return True
 
     def get_coordinates(self):

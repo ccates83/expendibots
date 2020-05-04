@@ -19,62 +19,10 @@ class Board():
         }
 
 
-    def update(self, action):
-        """
-        Update the state of the board with the given action - no checks for validity
-        """
-        print("UPDATING INTERNAL BOARD STATE")
-        if action[0] == "BOOM":
-            print("explode")
-            self.perform_boom(action[1])
-        else:
-            print("move")
-
-        print(self.state["white"])
-
-
-    def perform_boom(self, loc):
-        if not self.is_occupied(loc):
-            return
-
-        self.clear_tile(loc)
-
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                if (i, j) != (0, 0):
-                    self.perform_boom((loc[0]+i, loc[1]+j))
-
-
-    def is_occupied(self, loc):
-        return self.is_occupied_by_black(loc) or self.is_occupied_by_white(loc)
-
-
-    def is_occupied_by_white(self, loc):
-        for white in self.state["white"]:
-            if loc == white[1]: return True
-        return False
-
-    def is_occupied_by_black(self, loc):
-        for black in self.state["black"]:
-            if loc == black[1]: return True
-
-        return False
-
-
-    def clear_tile(self, loc):
-        """
-        Remove all tokens from a tile
-        """
-        for white in self.state["white"]:
-            if loc == white[1]:
-                self.state["white"].remove(white)
-        for black in self.state["black"]:
-            if loc == black[1]:
-                self.state["black"].remove(black)
-
-
     def print(self):
-        # DEBUG: For debugging purposes only
+        """
+        Debug print statement for our internal testing
+        """
         whites = []
         for elem in self.state["white"]:
             whites.append(elem[1])
@@ -85,10 +33,130 @@ class Board():
         for i in reversed(range(0, 8)):
             row = "|"
             for j in range(0, 8):
-                if (j, i) in whites:
-                    row += " w |"
-                elif (j, i) in blacks:
-                    row += " b |"
+                n = 0
+                t = "_"
+                for white in self.state["white"]:
+                    if (j, i) == white[1]:
+                        n = white[0]
+                        t = "w"
+                for black in self.state["black"]:
+                    if (j, i) == black[1]:
+                        n = black[0]
+                        t = "b"
+
+                if n == 0:
+                    row += "____|"
                 else:
-                    row += " . |"
+                    row += " {}{} |".format(n, t)
+
             print(row)
+
+
+    def perform_action(self, colour, action):
+        """
+        Execute an action from the project spec
+        """
+        if action[0] == "MOVE":
+            self.move(colour, action[1], action[2], action[3])
+        elif action[0] == "BOOM":
+            self.explode(action[1])
+        else:
+            print("INVALID ACTION")
+
+
+    def move(self, colour, n, loc1, loc2):
+        """
+        Apply a move for the board. Assumes valid. Validates in apply_action()
+        """
+        for piece in self.state[colour]:
+            # Find the piece
+            if piece[1] == loc1:
+                #Decide whether to unstack or move them all
+                if piece[0] == n:
+                    # Move all pieces
+                    self.clear_location(loc1)
+                else:
+                    # Unstack
+                    new_piece = (piece[0]-n, loc1)
+                    self.clear_location(loc1)
+                    self.state[colour].append(new_piece)
+                self.place_pieces(colour, n, loc2)
+
+
+
+    def explode(self, loc, already_exploded=[]):
+        """
+        Execute an explosion on the board
+        """
+        if not self.is_occupied(loc):
+            return
+
+        self.clear_location(loc)
+        already_exploded.append(loc)
+
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                next_loc = (loc[0]+i, loc[1]+j)
+                self.explode(next_loc, already_exploded)
+
+
+
+    def clear_location(self, loc):
+        """
+        Clear a location of all pieces
+        """
+        for white in self.state["white"]:
+            if white[1] == loc:
+                self.state["white"].remove(white)
+                return
+        for black in self.state["black"]:
+            if black[1] == loc:
+                self.state["black"].remove(white)
+                return
+
+
+    def place_pieces(self, colour, n, loc):
+        """
+        Place n pieces for the given player (colour) at loc
+        """
+        # Check if we need to stack
+        for piece in self.state[colour]:
+            if piece[1] == loc:
+                new_piece = (piece[0]+n, loc)
+                self.state[colour].remove(piece)
+                self.state[colour].append(new_piece)
+                return
+
+        # if we dont stack, just add the piece
+        self.state[colour].append((n, loc))
+
+
+
+    #
+    # Helpers
+    #
+    def is_occupied_by_black(self, loc):
+        """
+        Check if a given location is occupied by black
+        """
+        for black in self.state["black"]:
+            if loc == black[1]:
+                return True
+        return False
+
+
+    def is_occupied_by_white(self, loc):
+        """
+        Check if a given location is occupied by white
+        """
+        for white in self.state["white"]:
+            if loc == white[1]:
+                return True
+        return False
+
+
+    def is_occupied(self, loc):
+        """
+        Check if a given location is occupied
+        """
+        return self.is_occupied_by_black(loc) or self.is_occupied_by_white(loc)
