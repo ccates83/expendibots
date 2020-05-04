@@ -1,4 +1,5 @@
 from frostbyte.board import *
+from frostbyte.util import *
 
 
 class ExamplePlayer:
@@ -31,10 +32,31 @@ class ExamplePlayer:
         represented based on the spec's instructions for representing actions.
         """
         # TODO: Decide what action to take, and return it
-        self.state.print()
+        # self.state.print()
+        actions = list_all_possible_moves(self.colour, self.state)
 
-        for action in list_all_possible_moves(self.colour, self.state):
-            print(action)
+        # Evaluate boom actions. If we win immediately do it, if it betters our ratio
+        # of our pieces to opponents pieces, do the one that gives the best new ratio
+        current_ratio = get_ratio(self.colour, self.state)
+        best = current_ratio
+        boom_to_execute = None
+        for boom in get_booms(actions):
+            test = test_boom(self.state, self.colour, boom)
+            if did_win(self.colour, test):
+                return boom
+
+            new_ratio = get_ratio(self.colour, test)
+            if new_ratio > best:
+                best = new_ratio
+                boom_to_execute = boom
+
+        if boom_to_execute:
+            return boom_to_execute
+
+        # If none of the boom actions are in our favor, take the best move
+        pointed = point_actions(self.colour, actions)
+        pointed.sort(reverse=True)
+        return pointed[0][1]
 
 
     def update(self, colour, action):
@@ -56,32 +78,4 @@ class ExamplePlayer:
         against the game rules).
         """
         # TODO: Update state representation in response to action.
-        self.state.update(action, colour)
-
-
-
-
-    #
-    #   HELPERS
-    #
-
-
-
-    # Game State functions
-    def did_win(self):
-        """
-        Check if the current player won
-        """
-        if self.colour == "white":
-            return self.state["white"] and not self.state["black"]
-        else:
-            return not self.state["white"] and self.state["black"]
-
-    def did_lose(self):
-        """
-        Check if the current player lost
-        """
-        if self.colour == "white":
-            return not self.state["white"]
-        else:
-            return not self.state["black"]
+        self.state.update(colour, action)

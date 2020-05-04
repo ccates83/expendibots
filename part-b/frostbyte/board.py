@@ -78,10 +78,8 @@ class Board():
         for piece in self.state[colour]:
             # Find the piece
             if piece[1] == loc1:
-                print(piece)
                 #Decide whether to unstack or move them all
                 if piece[0] == n:
-                    print(n, piece[0])
                     # Move all pieces
                     self.clear_location(loc1)
                 else:
