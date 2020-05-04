@@ -52,6 +52,13 @@ class Board():
             print(row)
 
 
+    def update(self, colour, action):
+        """
+        Wrapper to be called when a player makes a move
+        """
+        self.perform_action(colour, action)
+
+
     def perform_action(self, colour, action):
         """
         Execute an action from the project spec
