@@ -5,4 +5,4 @@
 # example import below, you can define it in another file and import
 # it into this module with the name 'Player':
 
-from random_bot.player import ExamplePlayer as Player
+from random_bot.player import RandPlayer as Player

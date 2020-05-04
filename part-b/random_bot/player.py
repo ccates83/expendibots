@@ -3,7 +3,7 @@ from frostbyte.util import *
 import random
 
 
-class ExamplePlayer:
+class RandPlayer:
 
 
     def __init__(self, colour):
@@ -33,21 +33,15 @@ class ExamplePlayer:
         return an allowed action to play on this turn. The action must be
         represented based on the spec's instructions for representing actions.
         """
-        # TODO: Decide what action to take, and return it
-        #
-        # actions = [
-        #     ("MOVE", 1, (0, 0), (0, 1)),
-        #     ("MOVE", 1, (1, 0), (1, 1)),
-        #     ("MOVE", 1, (0, 1), (0, 3))
-        # ]
-        # for action in actions:
-        #     print(action)
-        #     self.state.perform_action(self.colour, action)
-        #     self.state.print(
 
         all_actions = list_all_possible_moves(self.colour, self.state)
         action = all_actions[random.randint(0, len(all_actions)-1)]
         self.state.print()
+
+        f = open("records.txt", "a")
+        f.write("{}".format(action))
+        f.close()
+
         return action
 
 
@@ -71,6 +65,7 @@ class ExamplePlayer:
         """
         # TODO: Update state representation in response to action.
         self.state.update(colour, action)
+        self.actions.append(action)
 
 
     #

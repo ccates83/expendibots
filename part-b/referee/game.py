@@ -16,7 +16,7 @@ structures for representing the state of a game.
 import sys
 import time
 from collections import Counter
-
+from random_bot.player import RandPlayer
 
 
 # Game-specific constants for use in other modules:
@@ -79,6 +79,13 @@ def play(players,
     out("game start!", depth=-1)
     display_state(game)
 
+    ##
+    ##  REMOVE LATER - this is to separate the game action sequences
+    ##
+    f = open("records.txt", "a")
+    f.write("\n")
+    f.close()
+
     # Repeat the following until the game ends
     # (starting with White as the current player, then alternating):
     curr_player, next_player = players
@@ -104,6 +111,7 @@ def play(players,
         curr_player, next_player = next_player, curr_player
 
     # After that loop, the game has ended (one way or another!)
+
     return game.end()
 
 
@@ -287,13 +295,22 @@ class Game:
             # no tokens remaining (draw)
             if max(self.score.values()) == 0:
                 result = "draw detected: no tokens remaining"
+                f = open("records.txt", "a")
+                f.write(" draw")
+                f.close()
             # one player's tokens remaining (win)
             elif min(self.score.values()) == 0:
                 winner = max(self.score.keys(), key=self.score.get)
                 result = "winner: " + winner
+                f  =open("records.txt", "a")
+                f.write(" {}".format(winner))
+                f.close()
             # technical draw detected (draw)
             else:
                 result = f"draw detected: {self.drawmsg}"
+                f = open("records.txt", "a")
+                f.write(" draw")
+                f.close()
             self._log("over", result)
             self._end_log()
             return result

@@ -23,12 +23,12 @@ class PlayerWrapper:
             logfn=None):
         self.log = logfn if logfn else (lambda *_, **__: None) # no-op
         self.name = name
-        
+
         # create some context managers for resource limiting
         self.timer = _CountdownTimer(time_limit, self.name)
         if space_limit is not None: space_limit *= NUM_PLAYERS
         self.space = _MemoryWatcher(space_limit)
-        
+
         # import the Player class from given package
         player_pkg, player_cls = player_loc
         self.log(f"importing {self.name}'s player class '{player_cls}' "
@@ -37,6 +37,7 @@ class PlayerWrapper:
 
     def init(self, colour):
         self.colour = colour
+        self.actions = []
         self.name += f' ({colour})'
         player_cls = str(self.Player).strip('<class >')
         self.log(f"initialising {self.colour} player as a {player_cls}")
@@ -45,6 +46,7 @@ class PlayerWrapper:
             self.player = self.Player(colour)
         self.log(self.timer.status(), depth=1)
         self.log(self.space.status(), depth=1)
+
 
     def action(self):
         self.log(f"asking {self.name} for next action...")
@@ -101,14 +103,14 @@ class _CountdownTimer:
         self._status = status
     def status(self):
         return self._status
-    
+
     def __enter__(self):
         # clean up memory off the clock
         gc.collect()
         # then start timing
         self.start = time.process_time()
         return self # unused
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         # accumulate elapsed time since __enter__
         elapsed = time.process_time() - self.start
@@ -136,7 +138,7 @@ class _MemoryWatcher:
         self._status = status
     def status(self):
         return self._status
-    
+
     def __enter__(self):
         return self # unused
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -146,7 +148,7 @@ class _MemoryWatcher:
         """
         if _SPACE_ENABLED:
             curr_usage, peak_usage = _get_space_usage()
-    
+
             # adjust measurements to reflect usage of players and referee, not
             # the Python interpreter itself
             curr_usage -= _DEFAULT_MEM_USAGE
@@ -164,7 +166,7 @@ def _get_space_usage():
     """
     Find the current and peak Virtual Memory usage of the current process, in MB
     """
-    # on linux, we can find the memory usage of our program we are looking for 
+    # on linux, we can find the memory usage of our program we are looking for
     # inside /proc/self/status (specifically, fields VmSize and VmPeak)
     with open("/proc/self/status") as proc_status:
         for line in proc_status:
@@ -182,12 +184,12 @@ def set_space_line():
     measure this first to later subtract from all measurements
     """
     global _SPACE_ENABLED, _DEFAULT_MEM_USAGE
-    
+
     try:
         _DEFAULT_MEM_USAGE, _ = _get_space_usage()
         _SPACE_ENABLED = True
     except:
-        # this also gives us a chance to detect if our space-measuring method 
+        # this also gives us a chance to detect if our space-measuring method
         # will work on this platform, and notify the user if not.
         print("* NOTE: unable to measure memory usage on this platform "
             "(try dimefox)")
