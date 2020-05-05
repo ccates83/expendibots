@@ -20,7 +20,69 @@ WHITE_VALUES = [
     [20802, 24905,  24096,  21534,  17396,  11114,  5262,   3465],
     [15849, 21504,  21337,  19418,  15513,  10880,  6004,   3492]
 ]
-BLACK_VALUES = reversed(WHITE_VALUES) # Use the white values, but the rows have to be reversed to account for the other side of the board
+BLACK_VALUES = WHITE_VALUES[::-1] # Use the white values, but the rows have to be reversed to account for the other side of the board
+
+
+def calculate_next_action(colour, board):
+    """
+    Given a player (colour) and the state of the board, returns the next best move for the player
+    """
+    actions = list_all_possible_moves(colour, board)
+
+    # Evaluate boom actions. If we win immediately do it, if it betters our ratio
+    # of our pieces to opponents pieces, do the one that gives the best new ratio
+    current_ratio = get_ratio(colour, board)
+    best = current_ratio
+    boom_to_execute = None
+    for boom in get_booms(actions):
+        test = test_boom(board, colour, boom)
+        if did_win(colour, test):
+            return boom
+
+        new_ratio = get_ratio(colour, test)
+        if new_ratio > best:
+            best = new_ratio
+            boom_to_execute = boom
+
+    if boom_to_execute:
+        return boom_to_execute
+    # If none of the boom actions are in our favor, take the best move
+    pointed = point_actions(colour, actions)
+
+    pointed.sort(reverse=True)
+    return pointed[0]
+
+
+def create_action_queue(colour, board):
+    """
+    Return a list of actions in order of priority for a given board state and player,
+    each action is preceded in a tuple by the value we give it
+    """
+    actions = list_all_possible_moves(colour, board)
+
+    # Evaluate boom actions. If we win immediately do it, if it betters our ratio
+    # of our pieces to opponents pieces, do the one that gives the best new ratio
+    current_ratio = get_ratio(colour, board)
+    best = current_ratio
+    boom_to_execute = None
+    for boom in get_booms(actions):
+        test = test_boom(board, colour, boom)
+        if did_win(colour, test):
+            return [boom]
+
+        new_ratio = get_ratio(colour, test)
+        if new_ratio > best:
+            best = new_ratio
+            boom_to_execute = boom
+
+    if boom_to_execute:
+        return [boom_to_execute]
+
+    # If none of the boom actions are in our favor, take the best move
+    pointed = point_actions(colour, actions)
+    pointed.sort(reverse=True)
+
+    return pointed
 
 
 def get_opp_colour(colour):
@@ -89,15 +151,6 @@ def point_actions(colour, actions):
             if colour == "black":
                 grid = BLACK_VALUES
 
-            # print("Action:", action)
-            # y = action[3][1]
-            # x = action[3][0]
-            # print(x, y)
-            # row = grid[y]
-            # print(row)
-            # val = row[7]
-            # print(val)
-            # print("Value:", grid[action[3][1]][action[3][0]])
             pointed.append((grid[action[3][1]][action[3][0]], action))
 
     return pointed
@@ -115,6 +168,15 @@ def get_booms(list_of_actions):
             booms.append(action)
 
     return booms
+
+
+def test_action(board, colour, action):
+    """
+    Return a new board state that represents the result of this action
+    """
+    temp = deepcopy(board)
+    temp.perform_action(colour,action)
+    return temp
 
 
 def test_boom(board, colour, action):

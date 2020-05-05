@@ -32,31 +32,61 @@ class ExamplePlayer:
         represented based on the spec's instructions for representing actions.
         """
         # TODO: Decide what action to take, and return it
-        # self.state.print()
-        actions = list_all_possible_moves(self.colour, self.state)
+        #
+        #   ALGORITHM:
+        #       Use the calculated book learned values to judge which move the opp would
+        #       take and our move, get the best difference so that overall our move is better.
+        #
+        #   POTENTIAL IMPROVEMENT:
+        #       - Incorporate the optimal stopping problem - look through 37% of the paths then take
+        #           the next move that is better than ones we have seen.
+        #
+        #       - Another way of pruning...?
+        #
 
-        # Evaluate boom actions. If we win immediately do it, if it betters our ratio
-        # of our pieces to opponents pieces, do the one that gives the best new ratio
-        current_ratio = get_ratio(self.colour, self.state)
-        best = current_ratio
-        boom_to_execute = None
-        for boom in get_booms(actions):
-            test = test_boom(self.state, self.colour, boom)
-            if did_win(self.colour, test):
-                return boom
+        our_queue = create_action_queue(self.colour, self.state)
+        our_queue_len = len(our_queue)
+        current_best_difference = None
+        best_move = None
 
-            new_ratio = get_ratio(self.colour, test)
-            if new_ratio > best:
-                best = new_ratio
-                boom_to_execute = boom
+        # If our queue only is 1 element to begin, we chose a boom
+        if our_queue_len == 1:
+            return our_queue[0]
 
-        if boom_to_execute:
-            return boom_to_execute
+        i = 0
+        while our_queue:
+            tup = our_queue.pop(0)
+            our_action = tup[1]
+            our_action_value = tup[0]
 
-        # If none of the boom actions are in our favor, take the best move
-        pointed = point_actions(self.colour, actions)
-        pointed.sort(reverse=True)
-        return pointed[0][1]
+            # Calculate their likely move off of ours
+            temp = test_action(self.state, self.colour, our_action)
+            tup = calculate_next_action(get_opp_colour(self.colour), temp)
+            opp_action_value = tup[0]
+
+            # If we think our opponent would explode next, dont do that move
+            if type(opp_action_value) is not int: continue
+
+            # Decide if this is the best so far
+            diff = our_action_value - opp_action_value
+            if not current_best_difference:
+                current_best_difference = diff
+                best_move = our_action
+            elif diff > current_best_difference:
+                best_move = our_action
+                # If we have seen 37% of the options, take the next best
+                if i / our_queue_len > 0.37:
+                    return best_move
+                current_best_difference = diff
+
+            # Update our progress through the queue
+            i += 1
+
+        return best_move
+
+        # print(create_action_queue(self.colour, self.state))
+
+        # return calculate_next_action(self.colour, self.state)
 
 
     def update(self, colour, action):
