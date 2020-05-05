@@ -54,34 +54,38 @@ black_grid = [
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0]
 ]
-def create_books(results):
+def create_books(game):
     """
     Create an 8x8 grid of the expendibots board that will fill with values for
     each location for black and white
     """
-    print("winner:", results[2])
-    for game in results:
-        if game[2] == "white":
-            w_multiplier = 1
-            b_multiplier = -1
-        else:
-            w_multiplier = -1
-            b_multiplier = 1
+    print("winner:", game[2])
+    if game[2] == "white":
+        w_multiplier = 1
+        b_multiplier = -1
+    else:
+        w_multiplier = -1
+        b_multiplier = 1
 
-    if results[2] == "draw": return
-    if results[2] == "white":
+    if game[2] == "draw": return
+    if game[2] == "white":
         w = 1
         b = -1
     else:
         w = -1
         b = 1
 
-    for elem in results[0]:
+    turn = 1
+    for elem in game[0]:
         loc = (int(elem[1]), int(elem[4]))
-        white_grid[loc[1]][loc[0]] += w
-    for elem in results[1]:
+        white_grid[loc[1]][loc[0]] += w*turn
+        turn += 1
+
+    turn = 1
+    for elem in game[1]:
         loc = (int(elem[1]), int(elem[4]))
-        black_grid[loc[1]][loc[0]] += b
+        black_grid[loc[1]][loc[0]] += b*turn
+        turn += 1
 
 
 

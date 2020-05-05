@@ -5,29 +5,22 @@ from copy import deepcopy
 Utility class for helper functions for Expendibots part b
 
 """
-# These books were calculated by running a random choice bot algorithm 1000 times
-# and adding +1 for any moves in a game that resulted in a win, -1 for any moves
-# in a game resulting in a loss
+# These books were calculated by running a random choice bot algorithm 10000 times
+# adding or subtracting n from the location (n being the turn number). Adding if they won,
+# subtracting if they lost
+# This was done iteratively, the first iteration with random, then the new values used against random
+# to create more informed values each iteration.
 WHITE_VALUES = [
-    [-7, 4, 17, 11, 33, -3, 6, -19],
-    [-28, -18, -33, 20, 18, -1, 17, -2],
-    [-23, -48, -61, -23, 17, 4, 2, 9],
-    [-12, -10, -22, -9, -7, -7, 9, 11],
-    [-19, 0, -2, 4, 5, -14, 8, -5],
-    [-16, 8, -6, 2, 1, -15, -4, -16],
-    [2  -9  -19  -12  -17  -14  -38  -24],
-    [-18, -23, -10, -28, 8, -14, -28, -55]
+    [244,   290,    164,    92,     29,     61,     0,      0   ],
+    [277,   258,    582,    257,    79,     114,    101,    106 ],
+    [4012,  3951,   2761,   1793,   1072,   607,    581,    322 ],
+    [8539,  9066,   6609,   4389,   2922,   1504,   1044,   827,],
+    [12750, 14922,  11889,  7483,   5472,   3001,   1880,   1298],
+    [17714, 20364,  17059,  14111,  11621,  5781,   2755,   2593],
+    [20802, 24905,  24096,  21534,  17396,  11114,  5262,   3465],
+    [15849, 21504,  21337,  19418,  15513,  10880,  6004,   3492]
 ]
-BLACK_VALUES = [
-    [-5, -9, 21, -12, 28, 9, -15, -30],
-    [11, 37, 7, 14, 21, 21, -1, -9],
-    [21, 26, 20, 13, 32, 11, 7, -5],
-    [11, 10, 8, 3, -6, -22, 1, -28],
-    [9, -1, -1, 2, -8, -16, 13, 0],
-    [17, 1, 9, -7, -20, 3, 15, 10],
-    [25, -7, 11, 21, 16, 22, 29, 41],
-    [6, 6, 33, 11, 12, 14, 29, 20]
-]
+BLACK_VALUES = reversed(WHITE_VALUES) # Use the white values, but the rows have to be reversed to account for the other side of the board
 
 
 def get_opp_colour(colour):
