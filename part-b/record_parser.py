@@ -75,21 +75,15 @@ def create_books(game):
         w = -1
         b = 1
 
-    turn = 1
+    turn = 2
     for elem in game[0]:
         loc = (int(elem[1]), int(elem[4]))
         white_grid[loc[1]][loc[0]] += w*turn
-        turn += 1
+        turn *=2
 
     turn = 1
-    for elem in game[1]:
-        loc = (int(elem[1]), int(elem[4]))
-        black_grid[loc[1]][loc[0]] += b*turn
-        turn += 1
 
-
-
-    return (white_grid, black_grid)
+    return white_grid
 
 
 
@@ -106,11 +100,13 @@ with open(filepath) as fp:
             games.append(data)
             n += 1
         line = fp.readline()
+    fp.close()
 
 
 for game in games:
-    print("updating for game winner:", game[2])
-    create_books(game)
+    if game:
+        print("updating for game winner:", game[2])
+        create_books(game)
 
 print("WHITE GRID")
 print_2d_arr(white_grid)
