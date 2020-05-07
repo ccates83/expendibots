@@ -39,7 +39,7 @@ run `python -m referee --help` for additional usage information.
 ** player 1 (white)'s turn
 * asking player 1 (white) for next action...
 *   player 1 (white) returned action: ('MOVE', 1, (1, 1), (1, 2))
-*   time:  + 0.221s  (just elapsed)    0.221s  (game total)
+*   time:  + 1.825s  (just elapsed)    1.825s  (game total)
 * displaying game info:
 *   tokens: white: 12, black: 12
 *      ┌───┬───┬───┬───┬───┬───┬───┬───┐
@@ -61,7 +61,7 @@ run `python -m referee --help` for additional usage information.
 *      └───┴───┴───┴───┴───┴───┴───┴───┘
 *   y/x  0   1   2   3   4   5   6   7
 * updating player 1 (white) with white's action ('MOVE', 1, (1, 1), (1, 2))...
-*   time:  + 0.000s  (just elapsed)    0.221s  (game total)
+*   time:  + 0.000s  (just elapsed)    1.825s  (game total)
 * updating player 2 (black) with white's action ('MOVE', 1, (1, 1), (1, 2))...
 *   time:  + 0.000s  (just elapsed)    0.000s  (game total)
 ** player 2 (black)'s turn
@@ -74,14 +74,14 @@ run `python -m referee --help` for additional usage information.
 |____| 1w |____|____|____|____|____|____|
 | 1w |____|____| 1w | 1w |____| 1w | 1w |
 | 1w | 1w |____| 1w | 1w |____| 1w | 1w |
-*   player 2 (black) returned action: ('MOVE', 1, (1, 6), (1, 7))
+*   player 2 (black) returned action: ('MOVE', 1, (4, 7), (3, 7))
 *   time:  + 0.003s  (just elapsed)    0.003s  (game total)
 * displaying game info:
 *   tokens: white: 12, black: 12
 *      ┌───┬───┬───┬───┬───┬───┬───┬───┐
-*    7 │[1]│[2]│   │[1]│[1]│   │[1]│[1]│
+*    7 │[1]│[1]│   │[2]│   │   │[1]│[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    6 │[1]│   │   │[1]│[1]│   │[1]│[1]│
+*    6 │[1]│[1]│   │[1]│[1]│   │[1]│[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
 *    5 │   │   │   │   │   │   │   │   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
@@ -96,20 +96,20 @@ run `python -m referee --help` for additional usage information.
 *    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
 *      └───┴───┴───┴───┴───┴───┴───┴───┘
 *   y/x  0   1   2   3   4   5   6   7
-* updating player 1 (white) with black's action ('MOVE', 1, (1, 6), (1, 7))...
-*   time:  + 0.000s  (just elapsed)    0.221s  (game total)
-* updating player 2 (black) with black's action ('MOVE', 1, (1, 6), (1, 7))...
+* updating player 1 (white) with black's action ('MOVE', 1, (4, 7), (3, 7))...
+*   time:  + 0.000s  (just elapsed)    1.825s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (4, 7), (3, 7))...
 *   time:  + 0.000s  (just elapsed)    0.003s  (game total)
 ** player 1 (white)'s turn
 * asking player 1 (white) for next action...
 *   player 1 (white) returned action: ('MOVE', 1, (1, 2), (1, 3))
-*   time:  + 0.194s  (just elapsed)    0.415s  (game total)
+*   time:  + 1.601s  (just elapsed)    3.425s  (game total)
 * displaying game info:
 *   tokens: white: 12, black: 12
 *      ┌───┬───┬───┬───┬───┬───┬───┬───┐
-*    7 │[1]│[2]│   │[1]│[1]│   │[1]│[1]│
+*    7 │[1]│[1]│   │[2]│   │   │[1]│[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    6 │[1]│   │   │[1]│[1]│   │[1]│[1]│
+*    6 │[1]│[1]│   │[1]│[1]│   │[1]│[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
 *    5 │   │   │   │   │   │   │   │   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
@@ -125,27 +125,27 @@ run `python -m referee --help` for additional usage information.
 *      └───┴───┴───┴───┴───┴───┴───┴───┘
 *   y/x  0   1   2   3   4   5   6   7
 * updating player 1 (white) with white's action ('MOVE', 1, (1, 2), (1, 3))...
-*   time:  + 0.000s  (just elapsed)    0.415s  (game total)
+*   time:  + 0.000s  (just elapsed)    3.425s  (game total)
 * updating player 2 (black) with white's action ('MOVE', 1, (1, 2), (1, 3))...
 *   time:  + 0.000s  (just elapsed)    0.003s  (game total)
 ** player 2 (black)'s turn
 * asking player 2 (black) for next action...
-| 1b | 2b |____| 1b | 1b |____| 1b | 1b |
-| 1b |____|____| 1b | 1b |____| 1b | 1b |
+| 1b | 1b |____| 2b |____|____| 1b | 1b |
+| 1b | 1b |____| 1b | 1b |____| 1b | 1b |
 |____|____|____|____|____|____|____|____|
 |____|____|____|____|____|____|____|____|
 |____| 1w |____|____|____|____|____|____|
 |____|____|____|____|____|____|____|____|
 | 1w |____|____| 1w | 1w |____| 1w | 1w |
 | 1w | 1w |____| 1w | 1w |____| 1w | 1w |
-*   player 2 (black) returned action: ('MOVE', 1, (6, 6), (5, 6))
+*   player 2 (black) returned action: ('MOVE', 1, (7, 7), (6, 7))
 *   time:  + 0.002s  (just elapsed)    0.005s  (game total)
 * displaying game info:
 *   tokens: white: 12, black: 12
 *      ┌───┬───┬───┬───┬───┬───┬───┬───┐
-*    7 │[1]│[2]│   │[1]│[1]│   │[1]│[1]│
+*    7 │[1]│[1]│   │[2]│   │   │[2]│   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    6 │[1]│   │   │[1]│[1]│[1]│   │[1]│
+*    6 │[1]│[1]│   │[1]│[1]│   │[1]│[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
 *    5 │   │   │   │   │   │   │   │   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
@@ -160,20 +160,20 @@ run `python -m referee --help` for additional usage information.
 *    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
 *      └───┴───┴───┴───┴───┴───┴───┴───┘
 *   y/x  0   1   2   3   4   5   6   7
-* updating player 1 (white) with black's action ('MOVE', 1, (6, 6), (5, 6))...
-*   time:  + 0.000s  (just elapsed)    0.415s  (game total)
-* updating player 2 (black) with black's action ('MOVE', 1, (6, 6), (5, 6))...
+* updating player 1 (white) with black's action ('MOVE', 1, (7, 7), (6, 7))...
+*   time:  + 0.000s  (just elapsed)    3.425s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (7, 7), (6, 7))...
 *   time:  + 0.000s  (just elapsed)    0.005s  (game total)
 ** player 1 (white)'s turn
 * asking player 1 (white) for next action...
 *   player 1 (white) returned action: ('MOVE', 1, (1, 3), (1, 4))
-*   time:  + 0.238s  (just elapsed)    0.653s  (game total)
+*   time:  + 0.013s  (just elapsed)    3.438s  (game total)
 * displaying game info:
 *   tokens: white: 12, black: 12
 *      ┌───┬───┬───┬───┬───┬───┬───┬───┐
-*    7 │[1]│[2]│   │[1]│[1]│   │[1]│[1]│
+*    7 │[1]│[1]│   │[2]│   │   │[2]│   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    6 │[1]│   │   │[1]│[1]│[1]│   │[1]│
+*    6 │[1]│[1]│   │[1]│[1]│   │[1]│[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
 *    5 │   │   │   │   │   │   │   │   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
@@ -189,29 +189,29 @@ run `python -m referee --help` for additional usage information.
 *      └───┴───┴───┴───┴───┴───┴───┴───┘
 *   y/x  0   1   2   3   4   5   6   7
 * updating player 1 (white) with white's action ('MOVE', 1, (1, 3), (1, 4))...
-*   time:  + 0.000s  (just elapsed)    0.653s  (game total)
+*   time:  + 0.000s  (just elapsed)    3.438s  (game total)
 * updating player 2 (black) with white's action ('MOVE', 1, (1, 3), (1, 4))...
 *   time:  + 0.000s  (just elapsed)    0.005s  (game total)
 ** player 2 (black)'s turn
 * asking player 2 (black) for next action...
-| 1b | 2b |____| 1b | 1b |____| 1b | 1b |
-| 1b |____|____| 1b | 1b | 1b |____| 1b |
+| 1b | 1b |____| 2b |____|____| 2b |____|
+| 1b | 1b |____| 1b | 1b |____| 1b | 1b |
 |____|____|____|____|____|____|____|____|
 |____| 1w |____|____|____|____|____|____|
 |____|____|____|____|____|____|____|____|
 |____|____|____|____|____|____|____|____|
 | 1w |____|____| 1w | 1w |____| 1w | 1w |
 | 1w | 1w |____| 1w | 1w |____| 1w | 1w |
-*   player 2 (black) returned action: ('MOVE', 1, (4, 6), (4, 5))
+*   player 2 (black) returned action: ('MOVE', 1, (6, 7), (5, 7))
 *   time:  + 0.003s  (just elapsed)    0.008s  (game total)
 * displaying game info:
 *   tokens: white: 12, black: 12
 *      ┌───┬───┬───┬───┬───┬───┬───┬───┐
-*    7 │[1]│[2]│   │[1]│[1]│   │[1]│[1]│
+*    7 │[1]│[1]│   │[2]│   │[1]│[1]│   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    6 │[1]│   │   │[1]│   │[1]│   │[1]│
+*    6 │[1]│[1]│   │[1]│[1]│   │[1]│[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    5 │   │   │   │   │[1]│   │   │   │
+*    5 │   │   │   │   │   │   │   │   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
 *    4 │   │(1)│   │   │   │   │   │   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
@@ -224,56 +224,20 @@ run `python -m referee --help` for additional usage information.
 *    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
 *      └───┴───┴───┴───┴───┴───┴───┴───┘
 *   y/x  0   1   2   3   4   5   6   7
-* updating player 1 (white) with black's action ('MOVE', 1, (4, 6), (4, 5))...
-*   time:  + 0.000s  (just elapsed)    0.653s  (game total)
-* updating player 2 (black) with black's action ('MOVE', 1, (4, 6), (4, 5))...
+* updating player 1 (white) with black's action ('MOVE', 1, (6, 7), (5, 7))...
+*   time:  + 0.000s  (just elapsed)    3.438s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (6, 7), (5, 7))...
 *   time:  + 0.000s  (just elapsed)    0.008s  (game total)
 ** player 1 (white)'s turn
 * asking player 1 (white) for next action...
 *   player 1 (white) returned action: ('MOVE', 1, (1, 4), (1, 5))
-*   time:  + 0.238s  (just elapsed)    0.891s  (game total)
+*   time:  + 0.015s  (just elapsed)    3.453s  (game total)
 * displaying game info:
 *   tokens: white: 12, black: 12
 *      ┌───┬───┬───┬───┬───┬───┬───┬───┐
-*    7 │[1]│[2]│   │[1]│[1]│   │[1]│[1]│
+*    7 │[1]│[1]│   │[2]│   │[1]│[1]│   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    6 │[1]│   │   │[1]│   │[1]│   │[1]│
-*      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    5 │   │(1)│   │   │[1]│   │   │   │
-*      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    4 │   │   │   │   │   │   │   │   │
-*      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    3 │   │   │   │   │   │   │   │   │
-*      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    2 │   │   │   │   │   │   │   │   │
-*      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    1 │(1)│   │   │(1)│(1)│   │(1)│(1)│
-*      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
-*      └───┴───┴───┴───┴───┴───┴───┴───┘
-*   y/x  0   1   2   3   4   5   6   7
-* updating player 1 (white) with white's action ('MOVE', 1, (1, 4), (1, 5))...
-*   time:  + 0.000s  (just elapsed)    0.891s  (game total)
-* updating player 2 (black) with white's action ('MOVE', 1, (1, 4), (1, 5))...
-*   time:  + 0.000s  (just elapsed)    0.008s  (game total)
-** player 2 (black)'s turn
-* asking player 2 (black) for next action...
-| 1b | 2b |____| 1b | 1b |____| 1b | 1b |
-| 1b |____|____| 1b |____| 1b |____| 1b |
-|____| 1w |____|____| 1b |____|____|____|
-|____|____|____|____|____|____|____|____|
-|____|____|____|____|____|____|____|____|
-|____|____|____|____|____|____|____|____|
-| 1w |____|____| 1w | 1w |____| 1w | 1w |
-| 1w | 1w |____| 1w | 1w |____| 1w | 1w |
-*   player 2 (black) returned action: ('BOOM', (7, 6))
-*   time:  + 0.003s  (just elapsed)    0.010s  (game total)
-* displaying game info:
-*   tokens: white: 12, black: 4
-*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
-*    7 │[1]│[2]│   │   │   │   │   │   │
-*      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    6 │[1]│   │   │   │   │   │   │   │
+*    6 │[1]│[1]│   │[1]│[1]│   │[1]│[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
 *    5 │   │(1)│   │   │   │   │   │   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
@@ -288,22 +252,58 @@ run `python -m referee --help` for additional usage information.
 *    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
 *      └───┴───┴───┴───┴───┴───┴───┴───┘
 *   y/x  0   1   2   3   4   5   6   7
-* updating player 1 (white) with black's action ('BOOM', (7, 6))...
-*   time:  + 0.000s  (just elapsed)    0.891s  (game total)
-* updating player 2 (black) with black's action ('BOOM', (7, 6))...
+* updating player 1 (white) with white's action ('MOVE', 1, (1, 4), (1, 5))...
+*   time:  + 0.000s  (just elapsed)    3.453s  (game total)
+* updating player 2 (black) with white's action ('MOVE', 1, (1, 4), (1, 5))...
+*   time:  + 0.000s  (just elapsed)    0.008s  (game total)
+** player 2 (black)'s turn
+* asking player 2 (black) for next action...
+| 1b | 1b |____| 2b |____| 1b | 1b |____|
+| 1b | 1b |____| 1b | 1b |____| 1b | 1b |
+|____| 1w |____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+| 1w |____|____| 1w | 1w |____| 1w | 1w |
+| 1w | 1w |____| 1w | 1w |____| 1w | 1w |
+*   player 2 (black) returned action: ('MOVE', 1, (7, 6), (7, 5))
+*   time:  + 0.003s  (just elapsed)    0.011s  (game total)
+* displaying game info:
+*   tokens: white: 12, black: 12
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │[1]│[1]│   │[2]│   │[1]│[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │[1]│[1]│   │[1]│[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │(1)│   │   │   │   │   │[1]│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │(1)│   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with black's action ('MOVE', 1, (7, 6), (7, 5))...
+*   time:  + 0.000s  (just elapsed)    3.453s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (7, 6), (7, 5))...
 *   time:  + 0.000s  (just elapsed)    0.011s  (game total)
 ** player 1 (white)'s turn
 * asking player 1 (white) for next action...
 *   player 1 (white) returned action: ('BOOM', (1, 5))
-*   time:  + 0.002s  (just elapsed)    0.892s  (game total)
+*   time:  + 0.005s  (just elapsed)    3.458s  (game total)
 * displaying game info:
-*   tokens: white: 11, black: 0
+*   tokens: white: 11, black: 8
 *      ┌───┬───┬───┬───┬───┬───┬───┬───┐
-*    7 │   │   │   │   │   │   │   │   │
+*    7 │   │   │   │[2]│   │[1]│[1]│   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    6 │   │   │   │   │   │   │   │   │
+*    6 │   │   │   │[1]│[1]│   │[1]│   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
-*    5 │   │   │   │   │   │   │   │   │
+*    5 │   │   │   │   │   │   │   │[1]│
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
 *    4 │   │   │   │   │   │   │   │   │
 *      ├───┼───┼───┼───┼───┼───┼───┼───┤
@@ -317,8 +317,392 @@ run `python -m referee --help` for additional usage information.
 *      └───┴───┴───┴───┴───┴───┴───┴───┘
 *   y/x  0   1   2   3   4   5   6   7
 * updating player 1 (white) with white's action ('BOOM', (1, 5))...
-*   time:  + 0.000s  (just elapsed)    0.893s  (game total)
+*   time:  + 0.000s  (just elapsed)    3.458s  (game total)
 * updating player 2 (black) with white's action ('BOOM', (1, 5))...
 *   time:  + 0.000s  (just elapsed)    0.011s  (game total)
+** player 2 (black)'s turn
+* asking player 2 (black) for next action...
+|____|____|____| 2b |____| 1b | 1b |____|
+|____|____|____| 1b | 1b |____| 1b |____|
+|____|____|____|____|____|____|____| 1b |
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+| 1w |____|____| 1w | 1w |____| 1w | 1w |
+| 1w | 1w |____| 1w | 1w |____| 1w | 1w |
+*   player 2 (black) returned action: ('MOVE', 1, (3, 6), (3, 5))
+*   time:  + 0.002s  (just elapsed)    0.013s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │[2]│   │[1]│[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │   │   │[1]│   │   │   │[1]│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │(1)│   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with black's action ('MOVE', 1, (3, 6), (3, 5))...
+*   time:  + 0.000s  (just elapsed)    3.458s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (3, 6), (3, 5))...
+*   time:  + 0.000s  (just elapsed)    0.013s  (game total)
+** player 1 (white)'s turn
+* asking player 1 (white) for next action...
+*   player 1 (white) returned action: ('MOVE', 1, (0, 1), (0, 2))
+*   time:  + 0.815s  (just elapsed)    4.273s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │[2]│   │[1]│[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │   │   │[1]│   │   │   │[1]│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │(1)│   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with white's action ('MOVE', 1, (0, 1), (0, 2))...
+*   time:  + 0.000s  (just elapsed)    4.273s  (game total)
+* updating player 2 (black) with white's action ('MOVE', 1, (0, 1), (0, 2))...
+*   time:  + 0.000s  (just elapsed)    0.013s  (game total)
+** player 2 (black)'s turn
+* asking player 2 (black) for next action...
+|____|____|____| 2b |____| 1b | 1b |____|
+|____|____|____|____| 1b |____| 1b |____|
+|____|____|____| 1b |____|____|____| 1b |
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+| 1w |____|____|____|____|____|____|____|
+|____|____|____| 1w | 1w |____| 1w | 1w |
+| 1w | 1w |____| 1w | 1w |____| 1w | 1w |
+*   player 2 (black) returned action: ('MOVE', 1, (7, 5), (6, 5))
+*   time:  + 0.002s  (just elapsed)    0.014s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │[2]│   │[1]│[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │   │   │[1]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │(1)│   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with black's action ('MOVE', 1, (7, 5), (6, 5))...
+*   time:  + 0.000s  (just elapsed)    4.273s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (7, 5), (6, 5))...
+*   time:  + 0.000s  (just elapsed)    0.014s  (game total)
+** player 1 (white)'s turn
+* asking player 1 (white) for next action...
+*   player 1 (white) returned action: ('MOVE', 1, (0, 2), (0, 3))
+*   time:  + 0.816s  (just elapsed)    5.090s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │[2]│   │[1]│[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │   │   │[1]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │(1)│   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with white's action ('MOVE', 1, (0, 2), (0, 3))...
+*   time:  + 0.000s  (just elapsed)    5.090s  (game total)
+* updating player 2 (black) with white's action ('MOVE', 1, (0, 2), (0, 3))...
+*   time:  + 0.000s  (just elapsed)    0.014s  (game total)
+** player 2 (black)'s turn
+* asking player 2 (black) for next action...
+|____|____|____| 2b |____| 1b | 1b |____|
+|____|____|____|____| 1b |____| 1b |____|
+|____|____|____| 1b |____|____| 1b |____|
+|____|____|____|____|____|____|____|____|
+| 1w |____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____| 1w | 1w |____| 1w | 1w |
+| 1w | 1w |____| 1w | 1w |____| 1w | 1w |
+*   player 2 (black) returned action: ('MOVE', 2, (3, 7), (3, 5))
+*   time:  + 0.002s  (just elapsed)    0.016s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │   │   │[1]│[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │   │   │[3]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │(1)│   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with black's action ('MOVE', 2, (3, 7), (3, 5))...
+*   time:  + 0.000s  (just elapsed)    5.090s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 2, (3, 7), (3, 5))...
+*   time:  + 0.000s  (just elapsed)    0.016s  (game total)
+** player 1 (white)'s turn
+* asking player 1 (white) for next action...
+*   player 1 (white) returned action: ('MOVE', 1, (0, 3), (0, 4))
+*   time:  + 1.547s  (just elapsed)    6.636s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │   │   │[1]│[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │   │   │[3]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │(1)│   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with white's action ('MOVE', 1, (0, 3), (0, 4))...
+*   time:  + 0.000s  (just elapsed)    6.636s  (game total)
+* updating player 2 (black) with white's action ('MOVE', 1, (0, 3), (0, 4))...
+*   time:  + 0.000s  (just elapsed)    0.016s  (game total)
+** player 2 (black)'s turn
+* asking player 2 (black) for next action...
+|____|____|____|____|____| 1b | 1b |____|
+|____|____|____|____| 1b |____| 1b |____|
+|____|____|____| 3b |____|____| 1b |____|
+| 1w |____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____| 1w | 1w |____| 1w | 1w |
+| 1w | 1w |____| 1w | 1w |____| 1w | 1w |
+*   player 2 (black) returned action: ('MOVE', 1, (6, 7), (5, 7))
+*   time:  + 0.002s  (just elapsed)    0.018s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │   │   │[2]│   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │   │   │[3]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │(1)│   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with black's action ('MOVE', 1, (6, 7), (5, 7))...
+*   time:  + 0.000s  (just elapsed)    6.636s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (6, 7), (5, 7))...
+*   time:  + 0.000s  (just elapsed)    0.018s  (game total)
+** player 1 (white)'s turn
+* asking player 1 (white) for next action...
+*   player 1 (white) returned action: ('MOVE', 1, (0, 4), (0, 5))
+*   time:  + 1.261s  (just elapsed)    7.897s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │   │   │[2]│   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │(1)│   │   │[3]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with white's action ('MOVE', 1, (0, 4), (0, 5))...
+*   time:  + 0.000s  (just elapsed)    7.897s  (game total)
+* updating player 2 (black) with white's action ('MOVE', 1, (0, 4), (0, 5))...
+*   time:  + 0.000s  (just elapsed)    0.018s  (game total)
+** player 2 (black)'s turn
+* asking player 2 (black) for next action...
+|____|____|____|____|____| 2b |____|____|
+|____|____|____|____| 1b |____| 1b |____|
+| 1w |____|____| 3b |____|____| 1b |____|
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____| 1w | 1w |____| 1w | 1w |
+| 1w | 1w |____| 1w | 1w |____| 1w | 1w |
+*   player 2 (black) returned action: ('MOVE', 1, (3, 5), (2, 5))
+*   time:  + 0.001s  (just elapsed)    0.019s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │   │   │[2]│   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │(1)│   │[1]│[2]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with black's action ('MOVE', 1, (3, 5), (2, 5))...
+*   time:  + 0.000s  (just elapsed)    7.897s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (3, 5), (2, 5))...
+*   time:  + 0.000s  (just elapsed)    0.020s  (game total)
+** player 1 (white)'s turn
+* asking player 1 (white) for next action...
+*   player 1 (white) returned action: ('MOVE', 1, (0, 5), (1, 5))
+*   time:  + 0.048s  (just elapsed)    7.945s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │   │   │[2]│   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │(1)│[1]│[2]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with white's action ('MOVE', 1, (0, 5), (1, 5))...
+*   time:  + 0.000s  (just elapsed)    7.945s  (game total)
+* updating player 2 (black) with white's action ('MOVE', 1, (0, 5), (1, 5))...
+*   time:  + 0.000s  (just elapsed)    0.020s  (game total)
+** player 2 (black)'s turn
+* asking player 2 (black) for next action...
+|____|____|____|____|____| 2b |____|____|
+|____|____|____|____| 1b |____| 1b |____|
+|____| 1w | 1b | 2b |____|____| 1b |____|
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____|____|____|____|____|____|
+|____|____|____| 1w | 1w |____| 1w | 1w |
+| 1w | 1w |____| 1w | 1w |____| 1w | 1w |
+*   player 2 (black) returned action: ('MOVE', 1, (5, 7), (4, 7))
+*   time:  + 0.002s  (just elapsed)    0.021s  (game total)
+* displaying game info:
+*   tokens: white: 11, black: 8
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │   │[1]│[1]│   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │[1]│   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │(1)│[1]│[2]│   │   │[1]│   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with black's action ('MOVE', 1, (5, 7), (4, 7))...
+*   time:  + 0.000s  (just elapsed)    7.945s  (game total)
+* updating player 2 (black) with black's action ('MOVE', 1, (5, 7), (4, 7))...
+*   time:  + 0.000s  (just elapsed)    0.021s  (game total)
+** player 1 (white)'s turn
+* asking player 1 (white) for next action...
+*   player 1 (white) returned action: ('BOOM', (1, 5))
+*   time:  + 0.002s  (just elapsed)    7.947s  (game total)
+* displaying game info:
+*   tokens: white: 10, black: 0
+*      ┌───┬───┬───┬───┬───┬───┬───┬───┐
+*    7 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    6 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    5 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    4 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    3 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    2 │   │   │   │   │   │   │   │   │
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    1 │   │   │   │(1)│(1)│   │(1)│(1)│
+*      ├───┼───┼───┼───┼───┼───┼───┼───┤
+*    0 │(1)│(1)│   │(1)│(1)│   │(1)│(1)│
+*      └───┴───┴───┴───┴───┴───┴───┴───┘
+*   y/x  0   1   2   3   4   5   6   7
+* updating player 1 (white) with white's action ('BOOM', (1, 5))...
+*   time:  + 0.000s  (just elapsed)    7.948s  (game total)
+* updating player 2 (black) with white's action ('BOOM', (1, 5))...
+*   time:  + 0.000s  (just elapsed)    0.021s  (game total)
 ** game over!
 * winner: white

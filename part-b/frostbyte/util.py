@@ -10,7 +10,20 @@ Utility class for helper functions for Expendibots part b
 # subtracting if they lost
 # This was done iteratively, the first iteration with random, then the new values used against random
 # to create more informed values each iteration.
-WHITE_VALUES = [
+
+
+EXPONENTIAL_WEIGHTS = [
+    [0,         0,          16384,      8192,       7168,       81920,      2097152,    155648   ],
+    [1040,      0,          1024,       0,          0,          4096,       159744,     1572864  ],
+    [1049344,   256,        757968,     8508224,    4196608,    17458240,   276773840,  145003088],
+    [192,       10487936,   7028848,    6326648,    5014472,    8471216,    14229900,   290867968],
+    [20972164,  2812,       4665200,    2503448,    37471064,   10498652,   39297164,   44084612 ],
+    [6704,      42733890,   1338384,    69622546,   312117424,  56156116,   84912710,   6143110  ],
+    [11524,     3098,       40376,      681089932,  11344370,   134768662,  6982534,    37670632 ],
+    [3286,      9464,       179602,     27312510,   223325632,  16262538,   3838178,    4368054  ]
+]
+
+LINEAR_WEIGHTS = [
     [244,   290,    164,    92,     29,     61,     0,      0   ],
     [277,   258,    582,    257,    79,     114,    101,    106 ],
     [4012,  3951,   2761,   1793,   1072,   607,    581,    322 ],
@@ -20,7 +33,9 @@ WHITE_VALUES = [
     [20802, 24905,  24096,  21534,  17396,  11114,  5262,   3465],
     [15849, 21504,  21337,  19418,  15513,  10880,  6004,   3492]
 ]
-BLACK_VALUES = WHITE_VALUES[::-1] # Use the white values, but the rows have to be reversed to account for the other side of the board
+
+WHITE_VALUES = LINEAR_WEIGHTS
+BLACK_VALUES = LINEAR_WEIGHTS[::-1] # the rows have to be reversed to account for the other side of the board
 
 
 def calculate_next_action(colour, board):

@@ -79,7 +79,7 @@ def create_books(game):
     for elem in game[0]:
         loc = (int(elem[1]), int(elem[4]))
         white_grid[loc[1]][loc[0]] += w*turn
-        turn *=2
+        turn *= 2
 
     turn = 1
 
