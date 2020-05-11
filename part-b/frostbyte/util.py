@@ -10,8 +10,6 @@ Utility class for helper functions for Expendibots part b
 # subtracting if they lost
 # This was done iteratively, the first iteration with random, then the new values used against random
 # to create more informed values each iteration.
-
-
 EXPONENTIAL_WEIGHTS = [
     [0,         0,          16384,      8192,       7168,       81920,      2097152,    155648   ],
     [1040,      0,          1024,       0,          0,          4096,       159744,     1572864  ],

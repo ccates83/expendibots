@@ -31,23 +31,7 @@ class ExamplePlayer:
         return an allowed action to play on this turn. The action must be
         represented based on the spec's instructions for representing actions.
         """
-        # TODO: Decide what action to take, and return it
-        #
-        #   ALGORITHM:
-        #       Use the calculated book learned values to judge which move the opp would
-        #       take and our move, get the best difference so that overall our move is better.
-        #
-        #   POTENTIAL IMPROVEMENT:
-        #       - Incorporate the optimal stopping problem - look through 37% of the paths then take
-        #           the next move that is better than ones we have seen.
-        #
-        #       - Another way of pruning...?
-        #
         return self.four_ply()
-
-        # print(create_action_queue(self.colour, self.state))
-
-        # return calculate_next_action(self.colour, self.state)
 
 
     def update(self, colour, action):
@@ -68,7 +52,6 @@ class ExamplePlayer:
         for the player colour (your method does not need to validate the action
         against the game rules).
         """
-        # TODO: Update state representation in response to action.
         self.state.update(colour, action)
 
 
@@ -124,6 +107,9 @@ class ExamplePlayer:
 
 
     def four_ply(self):
+        """
+        4-ply Search algorithm for the player
+        """
         first_move_queue = create_action_queue(self.colour, self.state)
         first_move_queue_len = len(first_move_queue)
 
@@ -138,7 +124,6 @@ class ExamplePlayer:
             tup = first_move_queue.pop(0)
             our_first_move = tup[1]
             our_first_move_value = tup[0]
-            # print("Evaluating:", tup)
 
             # Optimal stopping problem search limit
             if progress / first_move_queue_len > 0.37:
@@ -148,7 +133,6 @@ class ExamplePlayer:
             tup = calculate_next_action(get_opp_colour(self.colour), test_first_action_state)
             opp_first_action = tup[1]
             opp_first_action_value = tup[0]
-            # print("\tOpp first action:", opp_first_action)
 
             # If we calculate that the next move would mean the opp blowing up in their favor, shortcircuit
             if opp_first_action_value == 'BOOM':
@@ -167,7 +151,6 @@ class ExamplePlayer:
                 tup = second_move_queue.pop(0)
                 our_second_move = tup[1]
                 our_second_move_value = tup[0]
-                # print("\t\tEvaluating:", tup)
 
                 # Optimal stopping problem search limit
                 if progress2 / second_move_queue_len > 0.37:
@@ -177,12 +160,11 @@ class ExamplePlayer:
                 tup = calculate_next_action(get_opp_colour(self.colour), test_second_action_state)
                 opp_second_action = tup[1]
                 opp_second_action_value = tup[0]
-                # print("\t\t\tOpp second action:", opp_first_action)
 
+                # If we calculate that the next move would mean the opp blowing up in their favor, shortcircuit
                 if opp_second_action_value == 'BOOM':
                     continue
 
-                # print(our_first_move_value, our_second_move_value, opp_first_action_value, opp_second_action_value)
                 diff = (our_first_move_value + our_second_move_value) - (opp_first_action_value + opp_second_action_value)
                 if not current_best_difference:
                     current_best_difference = diff
